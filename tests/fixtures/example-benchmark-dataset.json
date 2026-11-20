@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "local-android-fixtures-v1",
+  "name": "ReverseLens fictional Android fixture dataset",
+  "version": "1.0.0",
+  "source_type": "fictional_example",
+  "description": "A fictional dataset record included only to demonstrate the benchmark metadata contract.",
+  "platforms": [
+    "android"
+  ],
+  "capability_classes": [
+    "package_metadata",
+    "dex_to_source"
+  ],
+  "source_repository": "https://github.com/Arhanpg/ReverseLens",
+  "source_revision": "fixture-only",
+  "artifact_manifest_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "ground_truth_available": false,
+  "targets": [
+    "target-android-demo-001"
+  ],
+  "license": {
+    "identifier": "Example-only / not a distributable dataset",
+    "redistribution_status": "not_reviewed",
+    "review_notes": "No binary sample is included. Replace this fixture before publishing real benchmark data."
+  },
+  "created_at": "2026-11-21T00:00:00Z",
+  "maintainer_notes": "Illustrative schema fixture, not a real benchmark dataset."
+}
