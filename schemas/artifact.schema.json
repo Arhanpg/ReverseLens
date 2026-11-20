@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/artifact.schema.json",
+  "title": "ReverseLens Artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_id", "run_id", "artifact_kind", "relative_path", "sha256", "size_bytes", "created_at", "provenance"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "artifact_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "run_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "engine_execution_id": { "type": "string", "maxLength": 128 },
+    "artifact_kind": { "enum": ["input", "raw_engine_output", "source_like_code", "disassembly", "resource", "network_capture", "screenshot", "log", "normalized_data", "graph", "report", "other"] },
+    "relative_path": { "type": "string", "minLength": 1, "maxLength": 2048, "not": { "pattern": "(^/|^[A-Za-z]:|(^|/)\\.\\.(/|$))" } },
+    "media_type": { "type": "string", "maxLength": 255 },
+    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "sensitive": { "type": "boolean", "default": false },
+    "retention_class": { "enum": ["temporary", "run_scoped", "user_retained", "delete_on_completion"] },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer_type", "producer_id"],
+      "properties": {
+        "producer_type": { "enum": ["user_upload", "engine", "normalizer", "report_generator", "system"] },
+        "producer_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "source_artifact_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    }
+  }
+}
