@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/authorization.schema.json",
+  "title": "ReverseLens Authorization Record",
+  "description": "An auditable record of the submitter's asserted authority and permitted analysis scope. This record is not a legal determination.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "authorization_record_id", "target_id", "basis", "permitted_actions", "scope", "attestation", "created_at", "status"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "authorization_record_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "target_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "basis": { "enum": ["owner_or_developer", "written_permission", "bug_bounty_scope", "local_training_lab", "lawful_possession_or_access", "other_documented_basis"] },
+    "basis_description": { "type": "string", "minLength": 10, "maxLength": 4000 },
+    "permitted_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["offline_static_analysis", "dynamic_analysis_in_owned_lab", "bounded_web_capture", "passive_metadata_analysis", "network_interception_in_owned_lab", "security_testing_within_written_scope"] }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_identifiers", "excluded_actions"],
+      "properties": {
+        "target_identifiers": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 512 } },
+        "allowed_hosts": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 253 } },
+        "allowed_path_prefixes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 512 } },
+        "excluded_actions": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 500 } },
+        "program_url": { "type": "string", "format": "uri", "maxLength": 2048 },
+        "scope_snapshot_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_type", "description"],
+        "properties": {
+          "evidence_type": { "enum": ["permission_document", "bug_bounty_policy", "ownership_statement", "lab_configuration", "other"] },
+          "description": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "reference": { "type": "string", "maxLength": 2048 },
+          "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+        }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confirmed", "confirmed_by", "confirmed_at", "statement"],
+      "properties": {
+        "confirmed": { "const": true },
+        "confirmed_by": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "confirmed_at": { "type": "string", "format": "date-time" },
+        "statement": { "type": "string", "minLength": 20, "maxLength": 4000 }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["active", "expired", "revoked", "needs_review"] },
+    "review_notes": { "type": "string", "maxLength": 4000 }
+  }
+}
