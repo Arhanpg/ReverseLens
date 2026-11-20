@@ -11,6 +11,7 @@ Phase 0 has been committed to the repository. Delivered baseline files include:
 - `tests/fixtures/`: fictional Android and local-lab web records with related authorization, execution and benchmark examples.
 - `scripts/validate_phase0.py` and `tests/test_phase0_contracts.py`: local structural and cross-reference validation.
 - `.github/workflows/phase0-validation.yml`: automated validation and pytest workflow.
+- `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, pull-request template and Dependabot configuration for public project governance.
 - `docs/`: architecture, benchmark, authorization, threat-model, engine-onboarding and ADR documentation.
 
 The Phase 0 GitHub Actions run completed successfully: [run 44807176269](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). The run validates schemas, registry and fixtures only. It does not mean the candidate tools have been installed, benchmarked on the laptop or integrated into the application.
