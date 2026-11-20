@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "ground_truth_item_id": "ground-truth-demo-001",
+  "dataset_id": "local-android-fixtures-v1",
+  "target_id": "target-android-demo-001",
+  "capability_class": "package_metadata",
+  "expected_item_type": "other",
+  "expected_value": "Example package identifier: com.example.reverselensdemo",
+  "canonical_key": "package-name:com.example.reverselensdemo",
+  "source_reference": {
+    "source_path": "example-source/AndroidManifest.xml",
+    "source_revision": "fixture-only"
+  },
+  "validation_status": "unreviewed",
+  "created_at": "2026-11-21T00:00:00Z",
+  "notes": "Illustrative expected-value record only; it is not verified ground truth."
+}
