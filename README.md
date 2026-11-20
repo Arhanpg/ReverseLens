@@ -20,7 +20,11 @@ ReverseLens is not another wrapper around one decompiler. It is a multi-engine w
 
 ## Project status
 
-**Planning / architecture baseline.** See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) for the full scope, system architecture, engine candidates, output layout, benchmark design, safety requirements and phased roadmap.
+**Phase 0 completed — Phase 1 is ready to begin.** The repository now contains the architecture baseline, 11 JSON Schemas, a 25-candidate engine registry, sample records, a Phase 0 validator, pytest tests and GitHub Actions validation.
+
+The Phase 0 workflow passed on the recorded commit: [GitHub Actions run](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). This validates repository contracts and fixtures; it does not mean any reverse-engineering engine has been installed or integrated.
+
+See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [benchmark methodology](docs/benchmark-methodology/README.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
 
 No engine integration is complete until it meets the Definition of Done in the development plan.
 
@@ -115,9 +119,28 @@ ReverseLens is designed for user-owned artifacts, authorized assessments and loc
 
 ReverseLens analyzes client-visible artifacts. It cannot recover server-only source code, private databases, model weights or internal backend logic merely from a browser or APK.
 
+## Phase 0 validation
+
+Run locally after installing the development requirements:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/validate_phase0.py
+python -m pytest
+```
+
+The validator checks JSON Schema contracts, registry entries, dependency references, sample fixtures and cross-record references. It does not install or execute reverse-engineering engines.
+
 ## Documentation
 
 - [Master Development Plan](DEVELOPMENT_PLAN.md)
+- [Phase 0 completion checklist](docs/PHASE_0_CHECKLIST.md)
+- [Architecture overview](docs/architecture/OVERVIEW.md)
+- [Benchmark methodology](docs/benchmark-methodology/README.md)
+- [Authorization policy](docs/legal-and-authorization/POLICY.md)
+- [Threat model](docs/threat-model/THREAT_MODEL.md)
+- [How to add an engine](docs/engine-registry/ADDING_AN_ENGINE.md)
+- [Engine registry](engines/registry.yaml)
 - [OWASP Mobile Application Security Testing Guide](https://mas.owasp.org/MASTG/)
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
 
