@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "observation_id": "observation-demo-001",
+  "run_id": "run-demo-android-001",
+  "engine_execution_id": "execution-demo-jadx-001",
+  "category": "package_metadata",
+  "title": "Example package metadata observation",
+  "description": "Illustrative observation demonstrating evidence provenance.",
+  "observed_at": "2026-11-21T00:00:03Z",
+  "confidence": "high",
+  "location": {
+    "artifact_id": "artifact-demo-jadx-summary-001",
+    "relative_path": "engines/jadx/raw/summary.txt"
+  },
+  "evidence": [
+    {
+      "artifact_id": "artifact-demo-jadx-summary-001",
+      "evidence_type": "raw_output",
+      "excerpt": "Package: com.example.reverselensdemo"
+    }
+  ],
+  "attributes": {
+    "fixture": true
+  }
+}
