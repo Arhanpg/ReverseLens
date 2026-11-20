@@ -1,7 +1,21 @@
 # ReverseLens — Master Development Plan
 
 > Project: ReverseLens | Owner: Arhanpg | Plan version: 1.0 | Updated: 2026-11-21
-> Status: Planning / architecture baseline | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
+> Status: Phase 0 completed; Phase 1 ready | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
+
+## Phase 0 implementation status
+
+Phase 0 has been committed to the repository. Delivered baseline files include:
+- `engines/registry.yaml`: 25 candidate analyzers with capability, input/output, network, isolation, resource and license-review metadata.
+- `schemas/`: 11 JSON Schemas for targets, authorization, engines, registry, runs, executions, artifacts, observations, findings and benchmark records.
+- `tests/fixtures/`: fictional Android and local-lab web records with related authorization, execution and benchmark examples.
+- `scripts/validate_phase0.py` and `tests/test_phase0_contracts.py`: local structural and cross-reference validation.
+- `.github/workflows/phase0-validation.yml`: automated validation and pytest workflow.
+- `docs/`: architecture, benchmark, authorization, threat-model, engine-onboarding and ADR documentation.
+
+The Phase 0 GitHub Actions run completed successfully: [run 44807176269](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). The run validates schemas, registry and fixtures only. It does not mean the candidate tools have been installed, benchmarked on the laptop or integrated into the application.
+
+See [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md) for the acceptance boundary.
 
 ## 1. Vision
 
@@ -427,7 +441,10 @@ ReverseLens/
 ├── LICENSE
 ├── NOTICE
 ├── docs/{architecture,adr,benchmark-methodology,legal-and-authorization,threat-model,engine-registry,user-guide}/
-├── schemas/{target,engine,run,artifact,finding,benchmark}.schema.json
+├── schemas/{target,authorization,engine,engine-registry,analysis-run,engine-execution,artifact,observation,finding,benchmark-experiment,benchmark-result}.schema.json
+├── engines/registry.yaml
+├── scripts/validate_phase0.py
+├── tests/{test_phase0_contracts.py,fixtures/}
 ├── apps/{web,api}/
 ├── workers/{android,web,native,common}/
 ├── engines/registry.yaml
