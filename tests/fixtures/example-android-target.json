@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "target_id": "target-android-demo-001",
+  "target_type": "android_artifact",
+  "display_name": "ReverseLens Demo Android App",
+  "identifier": "com.example.reverselensdemo",
+  "created_at": "2026-11-21T00:00:00Z",
+  "source": {
+    "kind": "local_file",
+    "filename": "reverselens-demo.apk",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "size_bytes": 102400,
+    "media_type": "application/vnd.android.package-archive"
+  },
+  "authorization_record_id": "auth-local-demo-001",
+  "labels": [
+    "fixture",
+    "android",
+    "local-lab"
+  ],
+  "notes": "Illustrative schema fixture only; no real APK is included."
+}
