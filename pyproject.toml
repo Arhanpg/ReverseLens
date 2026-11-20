@@ -1,0 +1,15 @@
+[project]
+name = "reverselens-phase0"
+version = "0.1.0"
+description = "Phase 0 contract and registry validation for ReverseLens"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
