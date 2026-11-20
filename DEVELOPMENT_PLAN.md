@@ -439,20 +439,54 @@ ReverseLens/
 ├── CODE_OF_CONDUCT.md
 ├── SECURITY.md
 ├── LICENSE
-├── NOTICE
-├── docs/{architecture,adr,benchmark-methodology,legal-and-authorization,threat-model,engine-registry,user-guide}/
-├── schemas/{target,authorization,engine,engine-registry,analysis-run,engine-execution,artifact,observation,finding,benchmark-experiment,benchmark-result}.schema.json
-├── engines/registry.yaml
-├── scripts/validate_phase0.py
-├── tests/{test_phase0_contracts.py,fixtures/}
-├── apps/{web,api}/
-├── workers/{android,web,native,common}/
-├── engines/registry.yaml
-├── benchmarks/{datasets,ground-truth,profiles,results,reports}/
-├── deploy/{docker,compose}/
+├── docs/
+│   ├── architecture/
+│   ├── adr/
+│   ├── benchmark-methodology/
+│   ├── legal-and-authorization/
+│   ├── threat-model/
+│   └── engine-registry/
+├── schemas/
+│   ├── target.schema.json
+│   ├── authorization.schema.json
+│   ├── engine.schema.json
+│   ├── engine-registry.schema.json
+│   ├── analysis-run.schema.json
+│   ├── engine-execution.schema.json
+│   ├── artifact.schema.json
+│   ├── observation.schema.json
+│   ├── finding.schema.json
+│   ├── benchmark-dataset.schema.json
+│   ├── ground-truth-item.schema.json
+│   ├── benchmark-experiment.schema.json
+│   └── benchmark-result.schema.json
+├── engines/
+│   └── registry.yaml
 ├── scripts/
-└── tests/{unit,integration,security,fixtures}/
+│   └── validate_phase0.py
+├── tests/
+│   ├── test_phase0_contracts.py
+│   └── fixtures/
+├── apps/
+│   ├── web/
+│   └── api/
+├── workers/
+│   ├── android/
+│   ├── web/
+│   ├── native/
+│   └── common/
+├── benchmarks/
+│   ├── datasets/
+│   ├── ground-truth/
+│   ├── profiles/
+│   ├── results/
+│   └── reports/
+└── deploy/
+    ├── docker/
+    └── compose/
 ```
+
+This is the intended end-state structure. Phase 0 has created the documentation, schemas, registry, validation script and test fixtures. Application, worker, benchmark-result and deployment implementation directories will be populated in their respective phases.
 
 Do not check in generated analysis workspaces or large sample APKs. Ignore private workspaces, proprietary outputs, browser profiles and sensitive captures in `.gitignore`.
 
