@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/engine-execution.schema.json",
+  "title": "ReverseLens Engine Execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "execution_id", "run_id", "engine_id", "status", "created_at", "output_directory"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "execution_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "run_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "engine_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+    "status": { "enum": ["not_selected", "incompatible", "skipped", "queued", "running", "succeeded", "partial", "failed", "timed_out", "cancelled"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "tool_version": { "type": "string", "maxLength": 128 },
+    "tool_commit": { "type": "string", "maxLength": 128 },
+    "adapter_version": { "type": "string", "maxLength": 128 },
+    "configuration_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "exit_code": { "type": "integer" },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "resource_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "peak_rss_bytes": { "type": "integer", "minimum": 0 },
+        "cpu_time_ms": { "type": "integer", "minimum": 0 },
+        "read_bytes": { "type": "integer", "minimum": 0 },
+        "write_bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "output_directory": { "type": "string", "minLength": 1, "maxLength": 1024 },
+    "output_artifact_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "stdout_artifact_id": { "type": "string" },
+    "stderr_artifact_id": { "type": "string" },
+    "warnings": { "type": "array", "items": { "type": "string", "maxLength": 2000 } },
+    "error_summary": { "type": "string", "maxLength": 4000 }
+  }
+}
