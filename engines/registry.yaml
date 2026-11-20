@@ -326,7 +326,7 @@ engines:
     dependencies: [frida]
     known_limitations:
       - Only run on owned or explicitly authorized test apps and devices.
-  - engine_id: playwrght
+  - engine_id: playwright
     name: Playwright
     description: Browser automation and capture of rendered DOM, requests, responses, console events and browser artifacts.
     platforms: [web]
