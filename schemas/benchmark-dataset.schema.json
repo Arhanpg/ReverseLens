@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/benchmark-dataset.schema.json",
+  "title": "ReverseLens Benchmark Dataset",
+  "description": "Versioned metadata for a benchmark corpus and its provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "dataset_id", "name", "version", "source_type", "platforms", "capability_classes", "targets", "created_at", "license"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "dataset_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "version": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "source_type": { "enum": ["source_known", "owasp_training", "open_source_with_known_revision", "authorized_exploratory", "fictional_example"] },
+    "description": { "type": "string", "maxLength": 5000 },
+    "platforms": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["android", "web", "native", "cross_platform"] } },
+    "capability_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 2, "maxLength": 100 } },
+    "source_repository": { "type": "string", "format": "uri", "maxLength": 2048 },
+    "source_revision": { "type": "string", "maxLength": 128 },
+    "artifact_manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "ground_truth_available": { "type": "boolean" },
+    "targets": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 3, "maxLength": 128 } },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "redistribution_status"],
+      "properties": {
+        "identifier": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "type": "string", "format": "uri", "maxLength": 2048 },
+        "redistribution_status": { "enum": ["allowed", "conditional", "not_allowed", "not_reviewed"] },
+        "review_notes": { "type": "string", "maxLength": 3000 }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "maintainer_notes": { "type": "string", "maxLength": 4000 }
+  }
+}
