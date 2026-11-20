@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/ground-truth-item.schema.json",
+  "title": "ReverseLens Ground Truth Item",
+  "description": "A labeled expected result for evaluating one or more engine capabilities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ground_truth_item_id", "dataset_id", "target_id", "capability_class", "expected_item_type", "expected_value", "validation_status", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "ground_truth_item_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "dataset_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "target_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "capability_class": { "type": "string", "minLength": 2, "maxLength": 100 },
+    "expected_item_type": { "enum": ["class", "method", "field", "resource", "manifest_component", "permission", "route", "asset", "dependency", "technology", "endpoint", "network_event", "graph_node", "graph_edge", "behavior", "other"] },
+    "expected_value": { "type": "string", "minLength": 1, "maxLength": 8000 },
+    "canonical_key": { "type": "string", "maxLength": 1000 },
+    "source_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_path": { "type": "string", "maxLength": 2048 },
+        "symbol": { "type": "string", "maxLength": 512 },
+        "line_start": { "type": "integer", "minimum": 1 },
+        "line_end": { "type": "integer", "minimum": 1 },
+        "source_revision": { "type": "string", "maxLength": 128 },
+        "source_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+      }
+    },
+    "validation_status": { "enum": ["unreviewed", "reviewed", "verified", "disputed", "not_applicable"] },
+    "reviewer": { "type": "string", "maxLength": 200 },
+    "reviewed_at": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string", "maxLength": 4000 }
+  }
+}
