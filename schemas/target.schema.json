@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/target.schema.json",
+  "title": "ReverseLens Target",
+  "description": "A user-supplied Android artifact, authorized web URL, or offline web bundle registered for analysis.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target_id", "target_type", "display_name", "created_at", "source", "authorization_record_id"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "target_id": { "type": "string", "minLength": 3, "maxLength": 128, "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]+$" },
+    "target_type": { "enum": ["android_artifact", "web_url", "web_bundle", "capture_file"] },
+    "display_name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "identifier": { "type": "string", "maxLength": 512, "description": "Package name, hostname, or other non-secret target identifier." },
+    "created_at": { "type": "string", "format": "date-time" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["local_file", "web_url", "offline_archive", "browser_capture"] },
+        "filename": { "type": "string", "maxLength": 512 },
+        "url": { "type": "string", "format": "uri", "maxLength": 2048 },
+        "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "media_type": { "type": "string", "maxLength": 255 }
+      }
+    },
+    "authorization_record_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed_hosts": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 253 } },
+        "allowed_path_prefixes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 512 } },
+        "allowed_methods": { "type": "array", "uniqueItems": true, "items": { "enum": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"] } },
+        "max_requests": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "max_pages": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "max_response_bytes": { "type": "integer", "minimum": 1024 },
+        "max_duration_seconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+        "respect_robots_txt": { "type": "boolean", "default": true },
+        "local_lab": { "type": "boolean", "default": false }
+      }
+    },
+    "labels": { "type": "array", "uniqueItems": true, "items": { "type": "string", "maxLength": 64 }, "maxItems": 32 },
+    "notes": { "type": "string", "maxLength": 4000 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "target_type": { "const": "web_url" } }, "required": ["target_type"] },
+      "then": {
+        "properties": {
+          "source": { "required": ["url"] },
+          "scope": { "required": ["allowed_hosts", "max_requests", "max_duration_seconds"] }
+        },
+        "required": ["scope"]
+      }
+    },
+    {
+      "if": { "properties": { "target_type": { "const": "android_artifact" } }, "required": ["target_type"] },
+      "then": { "properties": { "source": { "required": ["filename", "sha256"] } } }
+    }
+  ]
+}
