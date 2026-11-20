@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/engine.schema.json",
+  "title": "ReverseLens Engine Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["engine_id", "name", "platforms", "roles", "capability_classes", "repository_url", "integration_status", "priority", "license_review_status", "network_requirement", "isolation_profile"],
+  "properties": {
+    "engine_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 2000 },
+    "platforms": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["android", "web", "native", "cross_platform"] } },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["decompiler", "disassembler", "package_decoder", "runtime_classifier", "browser_capture", "technology_fingerprint", "bundle_reconstructor", "ast_analyzer", "security_analyzer", "dependency_auditor", "privacy_tracker_detector", "traffic_analyzer", "performance_auditor", "dynamic_instrumentation", "benchmark_validator"] }
+    },
+    "capability_classes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 2, "maxLength": 80 } },
+    "repository_url": { "type": "string", "format": "uri", "pattern": "^https://github\\.com/" },
+    "documentation_url": { "type": "string", "format": "uri" },
+    "integration_status": { "enum": ["candidate", "researching", "prototype", "integrated", "deprecated", "blocked"] },
+    "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+    "license": { "type": "string", "maxLength": 100 },
+    "license_review_status": { "enum": ["pending", "metadata_checked", "license_file_reviewed", "legal_review_complete", "blocked"] },
+    "maintenance_status": { "enum": ["active_signal", "limited_signal", "maintenance_review", "archived", "unknown"] },
+    "last_repository_check": { "type": "string", "format": "date" },
+    "supported_input_types": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+    "expected_outputs": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+    "network_requirement": { "enum": ["none", "restricted", "authorized_target", "owned_lab_only"] },
+    "isolation_profile": { "enum": ["artifact_sandbox", "browser_sandbox", "network_lab", "trusted_metadata_only"] },
+    "runtime_requirements": { "type": "array", "items": { "type": "string", "maxLength": 200 } },
+    "resource_class": { "enum": ["light", "medium", "heavy", "very_heavy", "unknown"] },
+    "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" } },
+    "known_limitations": { "type": "array", "items": { "type": "string", "maxLength": 1000 } },
+    "notes": { "type": "string", "maxLength": 3000 }
+  }
+}
