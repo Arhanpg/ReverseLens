@@ -20,7 +20,7 @@ ReverseLens is not another wrapper around one decompiler. It is a multi-engine w
 
 ## Project status
 
-**Phase 0 completed — Phase 1 is ready to begin.** The repository now contains the architecture baseline, 11 JSON Schemas, a 25-candidate engine registry, sample records, a Phase 0 validator, pytest tests and GitHub Actions validation.
+**Phase 0 completed — Phase 1 is ready to begin.** The repository now contains the architecture baseline, 13 JSON Schemas, a 25-candidate engine registry, sample records, a Phase 0 validator, pytest tests and GitHub Actions validation.
 
 The Phase 0 workflow passed on the recorded commit: [GitHub Actions run](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). This validates repository contracts and fixtures; it does not mean any reverse-engineering engine has been installed or integrated.
 
