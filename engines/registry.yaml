@@ -1,0 +1,581 @@
+registry_version: "1.0.0"
+updated_at: "2026-11-21"
+engines:
+  - engine_id: jadx
+    name: JADX
+    description: DEX to Java-like source decompiler and cross-reference explorer.
+    platforms: [android]
+    roles: [decompiler]
+    capability_classes: [dex_to_source, cross_references]
+    repository_url: https://github.com/skylot/jadx
+    documentation_url: https://github.com/skylot/jadx
+    integration_status: candidate
+    priority: P0
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk, dex, aab_derived_apk]
+    expected_outputs: [java_like_source, resource_references, cross_references, logs]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Java runtime]
+    resource_class: heavy
+    dependencies: []
+    known_limitations:
+      - Reconstructed source may not preserve original names, comments, formatting or project structure.
+      - Does not decompile native shared libraries.
+  - engine_id: apktool
+    name: Apktool
+    description: Android resource decoding, manifest processing and Smali disassembly.
+    platforms: [android]
+    roles: [disassembler, package_decoder]
+    capability_classes: [android_resources, manifest, smali]
+    repository_url: https://github.com/iBotPeaches/Apktool
+    documentation_url: https://apktool.org/
+    integration_status: candidate
+    priority: P0
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk]
+    expected_outputs: [decoded_manifest, resources, smali, logs]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Java runtime]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Resource decoding is not equivalent to source-code decompilation.
+  - engine_id: androguard
+    name: Androguard
+    description: Python library and CLI tooling for APK/DEX parsing, analysis and graph extraction.
+    platforms: [android]
+    roles: [disassembler, benchmark_validator]
+    capability_classes: [apk_parsing, dex_analysis, call_graph]
+    repository_url: https://github.com/androguard/androguard
+    documentation_url: https://androguard.readthedocs.io/
+    integration_status: candidate
+    priority: P0
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk, dex]
+    expected_outputs: [package_metadata, methods, references, call_graph]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - API compatibility must be pinned and tested for the selected release.
+  - engine_id: apkid
+    name: APKiD
+    description: Fingerprints Android compilers, packers, protectors and related indicators.
+    platforms: [android]
+    roles: [runtime_classifier]
+    capability_classes: [packer_detection, compiler_detection, protector_detection]
+    repository_url: https://github.com/rednaga/APKiD
+    documentation_url: https://github.com/rednaga/APKiD
+    integration_status: candidate
+    priority: P0
+    license: UNVERIFIED_GITHUB_METADATA
+    license_review_status: pending
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk, dex]
+    expected_outputs: [fingerprints, detection_metadata]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python, YARA]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Detection signatures can be incomplete or produce false positives.
+  - engine_id: mobsf
+    name: Mobile Security Framework
+    description: Broad mobile application static and dynamic security analysis platform.
+    platforms: [android]
+    roles: [security_analyzer, dependency_auditor]
+    capability_classes: [mobile_static_analysis, mobile_dynamic_analysis]
+    repository_url: https://github.com/MobSF/Mobile-Security-Framework-MobSF
+    documentation_url: https://mobsf.github.io/docs/
+    integration_status: candidate
+    priority: P0
+    license: GPL-3.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk, supported_mobile_packages]
+    expected_outputs: [security_report, manifest_analysis, finding_inventory]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python, Docker]
+    resource_class: heavy
+    dependencies: []
+    known_limitations:
+      - Dynamic analysis requires a separately prepared, authorized test environment.
+      - Distribution and service-deployment implications of GPL-3.0 require review.
+  - engine_id: bundletool
+    name: bundletool
+    description: Google's command-line tool for Android App Bundle and APK-set operations.
+    platforms: [android]
+    roles: [package_decoder]
+    capability_classes: [aab_processing, split_apk_processing]
+    repository_url: https://github.com/google/bundletool
+    documentation_url: https://developer.android.com/tools/bundletool
+    integration_status: candidate
+    priority: P0
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: limited_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [aab, apks]
+    expected_outputs: [apk_set, split_inventory, device_specific_apks]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Java runtime, Android SDK components where required]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Device-specific APK generation requires appropriate device specification.
+  - engine_id: ghidra
+    name: Ghidra
+    description: Software reverse-engineering framework for native and other supported binaries.
+    platforms: [android, native]
+    roles: [disassembler, decompiler]
+    capability_classes: [elf_analysis, arm64_disassembly, native_pseudocode]
+    repository_url: https://github.com/NationalSecurityAgency/ghidra
+    documentation_url: https://github.com/NationalSecurityAgency/ghidra
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [elf, so, supported_native_binary]
+    expected_outputs: [disassembly, functions, symbols, decompiler_pseudocode]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [64-bit operating system, Java runtime]
+    resource_class: very_heavy
+    dependencies: []
+    known_limitations:
+      - Analysis quality depends on symbols, architecture, compiler output and analyst interpretation.
+  - engine_id: apkeditor
+    name: APKEditor
+    description: APK processing and editing utility for supported Android package formats.
+    platforms: [android]
+    roles: [package_decoder]
+    capability_classes: [apk_processing, split_package_processing]
+    repository_url: https://github.com/REAndroid/APKEditor
+    documentation_url: https://github.com/REAndroid/APKEditor
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk, supported_split_archives]
+    expected_outputs: [processed_package, package_inventory]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Java runtime]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Supported archive formats must be validated with fixtures before claiming compatibility.
+  - engine_id: blutter
+    name: Blutter
+    description: Flutter AOT reverse-engineering helper for supported ARM64 application binaries.
+    platforms: [android, native]
+    roles: [disassembler, decompiler]
+    capability_classes: [flutter_aot, dart_object_pool, arm64]
+    repository_url: https://github.com/worawit/blutter
+    documentation_url: https://github.com/worawit/blutter
+    integration_status: candidate
+    priority: P1
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [flutter_arm64_libapp_so]
+    expected_outputs: [dart_symbols, object_pool, assembly, pseudocode_artifacts]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [C++ toolchain, Python, supported Dart/Flutter binary format]
+    resource_class: heavy
+    dependencies: []
+    known_limitations:
+      - Runtime/version/architecture compatibility must be checked per sample.
+  - engine_id: hermes-dec
+    name: Hermes Decompiler
+    description: Disassembles and reconstructs partial JavaScript-like output from React Native Hermes bytecode.
+    platforms: [android]
+    roles: [disassembler, decompiler]
+    capability_classes: [react_native, hermes_bytecode]
+    repository_url: https://github.com/P1sec/hermes-dec
+    documentation_url: https://github.com/P1sec/hermes-dec
+    integration_status: candidate
+    priority: P1
+    license: AGPL-3.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [hermes_bytecode_bundle]
+    expected_outputs: [hermes_disassembly, reconstructed_javascript]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Reconstructed output is not guaranteed to be equivalent to original JavaScript.
+      - AGPL-3.0 obligations require distribution/service review.
+  - engine_id: apkleaks
+    name: APKLeaks
+    description: Scans supplied APK files for URI, endpoint and secret-like string patterns.
+    platforms: [android]
+    roles: [security_analyzer]
+    capability_classes: [uri_extraction, string_pattern_triage]
+    repository_url: https://github.com/dwisiswant0/apkleaks
+    documentation_url: https://github.com/dwisiswant0/apkleaks
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: limited_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk]
+    expected_outputs: [uri_candidates, secret_pattern_candidates]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Pattern matches are leads for review, not proof that a secret is usable or exposed.
+  - engine_id: exodus-standalone
+    name: Exodus Privacy Standalone
+    description: Local tracker-signature analysis for compatible Android packages.
+    platforms: [android]
+    roles: [privacy_tracker_detector]
+    capability_classes: [tracker_signature_matching]
+    repository_url: https://github.com/Exodus-Privacy/exodus-standalone
+    documentation_url: https://github.com/Exodus-Privacy/exodus-standalone
+    integration_status: candidate
+    priority: P2
+    license: AGPL-3.0
+    license_review_status: metadata_checked
+    maintenance_status: limited_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [apk]
+    expected_outputs: [tracker_inventory]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Python]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Signature databases are incomplete and results depend on signature freshness.
+  - engine_id: frida
+    name: Frida
+    description: Dynamic instrumentation toolkit for controlled, owned or explicitly authorized lab applications.
+    platforms: [android, native]
+    roles: [dynamic_instrumentation]
+    capability_classes: [runtime_observation, instrumentation]
+    repository_url: https://github.com/frida/frida
+    documentation_url: https://frida.re/docs/
+    integration_status: candidate
+    priority: P2
+    license: UNVERIFIED_GITHUB_METADATA
+    license_review_status: pending
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_running_process]
+    expected_outputs: [runtime_observations, instrumentation_logs]
+    network_requirement: owned_lab_only
+    isolation_profile: network_lab
+    runtime_requirements: [Android test device or emulator, matching Frida client/server]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Only run on owned or explicitly authorized test apps and devices.
+  - engine_id: objection
+    name: Objection
+    description: Runtime mobile exploration framework built around Frida.
+    platforms: [android]
+    roles: [dynamic_instrumentation]
+    capability_classes: [runtime_exploration]
+    repository_url: https://github.com/sensepost/objection
+    documentation_url: https://github.com/sensepost/objection
+    integration_status: candidate
+    priority: P2
+    license: GPL-3.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_running_process]
+    expected_outputs: [runtime_observations, exploration_logs]
+    network_requirement: owned_lab_only
+    isolation_profile: network_lab
+    runtime_requirements: [Python, Frida, Android test device or emulator]
+    resource_class: medium
+    dependencies: [frida]
+    known_limitations:
+      - Only run on owned or explicitly authorized test apps and devices.
+  - engine_id: playwrght
+    name: Playwright
+    description: Browser automation and capture of rendered DOM, requests, responses, console events and browser artifacts.
+    platforms: [web]
+    roles: [browser_capture]
+    capability_classes: [dom_capture, network_capture, browser_runtime]
+    repository_url: https://github.com/microsoft/playwright
+    documentation_url: https://playwright.dev/
+    integration_status: candidate
+    priority: P0
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_http_url, local_web_application]
+    expected_outputs: [dom_snapshot, har, screenshots, console_log, js_assets]
+    network_requirement: authorized_target
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Node.js, browser binaries]
+    resource_class: heavy
+    dependencies: []
+    known_limitations:
+      - Browser capture sees only client-visible behavior within the configured session and scope.
+  - engine_id: web-check
+    name: Web-Check
+    description: Website configuration and public infrastructure information collection.
+    platforms: [web]
+    roles: [technology_fingerprint, security_analyzer]
+    capability_classes: [dns_tls_headers_public_metadata]
+    repository_url: https://github.com/lissy93/web-check
+    documentation_url: https://github.com/lissy93/web-check
+    integration_status: candidate
+    priority: P1
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_hostname, authorized_http_url]
+    expected_outputs: [site_metadata, tls_metadata, header_observations]
+    network_requirement: authorized_target
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Node.js or Docker]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Optional third-party API integrations and data sources may have separate terms and credentials.
+  - engine_id: wappalyzergo
+    name: Wappalyzergo
+    description: Go implementation of Wappalyzer technology detection signatures.
+    platforms: [web]
+    roles: [technology_fingerprint]
+    capability_classes: [web_technology_detection]
+    repository_url: https://github.com/projectdiscovery/wappalyzergo
+    documentation_url: https://github.com/projectdiscovery/wappalyzergo
+    integration_status: candidate
+    priority: P1
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_http_url, captured_http_response]
+    expected_outputs: [technology_inventory]
+    network_requirement: restricted
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Go]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Fingerprint signatures can be incomplete or produce false positives.
+  - engine_id: webcrack
+    name: Webcrack
+    description: JavaScript deobfuscation, unminification and bundle unpacking.
+    platforms: [web]
+    roles: [bundle_reconstructor, decompiler]
+    capability_classes: [javascript_unminification, javascript_deobfuscation, webpack_unpacking]
+    repository_url: https://github.com/j4k0xb/webcrack
+    documentation_url: https://github.com/j4k0xb/webcrack
+    integration_status: candidate
+    priority: P1
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [javascript_bundle]
+    expected_outputs: [reformatted_javascript, reconstructed_modules]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Node.js]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Does not reliably recover arbitrary original names, comments or project source layout.
+  - engine_id: wakaru
+    name: Wakaru
+    description: AST-based reconstruction of supported modern JavaScript module bundles.
+    platforms: [web]
+    roles: [bundle_reconstructor, decompiler]
+    capability_classes: [javascript_bundle_reconstruction, module_recovery]
+    repository_url: https://github.com/pionxzh/wakaru
+    documentation_url: https://github.com/pionxzh/wakaru
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [javascript_bundle]
+    expected_outputs: [reconstructed_modules, provenance_metadata]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Node.js]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Recovery depends on bundler format/version and code transformations.
+  - engine_id: oxc
+    name: Oxc
+    description: High-performance JavaScript and TypeScript parsing and AST tooling.
+    platforms: [web]
+    roles: [ast_analyzer]
+    capability_classes: [javascript_ast, typescript_ast, module_analysis]
+    repository_url: https://github.com/oxc-project/oxc
+    documentation_url: https://oxc.rs/
+    integration_status: candidate
+    priority: P1
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [javascript, typescript, javascript_bundle]
+    expected_outputs: [ast, module_inventory]
+    network_requirement: none
+    isolation_profile: artifact_sandbox
+    runtime_requirements: [Node.js or Rust toolchain depending on adapter]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Parsing and AST extraction do not themselves deobfuscate code.
+  - engine_id: retirejs
+    name: Retire.js
+    description: Detects known vulnerable third-party JavaScript libraries and versions.
+    platforms: [web]
+    roles: [dependency_auditor, security_analyzer]
+    capability_classes: [javascript_library_detection, known_vulnerability_matching]
+    repository_url: https://github.com/RetireJS/retire.js
+    documentation_url: https://retirejs.github.io/retire.js/
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [javascript_bundle, authorized_http_url]
+    expected_outputs: [library_inventory, vulnerability_candidates]
+    network_requirement: restricted
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Node.js]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Signature matching can miss custom-built, tree-shaken or modified libraries.
+  - engine_id: lighthouse
+    name: Lighthouse
+    description: Automated website performance, accessibility and quality audit.
+    platforms: [web]
+    roles: [performance_auditor]
+    capability_classes: [performance_metrics, accessibility_audit, quality_audit]
+    repository_url: https://github.com/GoogleChrome/lighthouse
+    documentation_url: https://developer.chrome.com/docs/lighthouse/overview/
+    integration_status: candidate
+    priority: P1
+    license: Apache-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_http_url, local_web_application]
+    expected_outputs: [lighthouse_json, performance_metrics]
+    network_requirement: authorized_target
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Node.js, Chromium]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Scores vary with hardware, network and test conditions; use controlled benchmark setups.
+  - engine_id: whatweb
+    name: WhatWeb
+    description: Web technology fingerprinting scanner.
+    platforms: [web]
+    roles: [technology_fingerprint]
+    capability_classes: [web_fingerprinting]
+    repository_url: https://github.com/urbanadventurer/WhatWeb
+    documentation_url: https://github.com/urbanadventurer/WhatWeb
+    integration_status: candidate
+    priority: P2
+    license: GPL-2.0
+    license_review_status: metadata_checked
+    maintenance_status: limited_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [authorized_http_url]
+    expected_outputs: [technology_inventory]
+    network_requirement: authorized_target
+    isolation_profile: browser_sandbox
+    runtime_requirements: [Ruby]
+    resource_class: light
+    dependencies: []
+    known_limitations:
+      - Active plugins and request behavior must be restricted to authorized low-impact checks.
+  - engine_id: mitmproxy
+    name: mitmproxy
+    description: Interactive HTTPS proxy for traffic inspection in owned or explicitly authorized labs.
+    platforms: [web, android]
+    roles: [traffic_analyzer]
+    capability_classes: [http_capture, tls_interception]
+    repository_url: https://github.com/mitmproxy/mitmproxy
+    documentation_url: https://docs.mitmproxy.org/
+    integration_status: candidate
+    priority: P2
+    license: MIT
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [owned_lab_traffic]
+    expected_outputs: [http_flows, traffic_metadata]
+    network_requirement: owned_lab_only
+    isolation_profile: network_lab
+    runtime_requirements: [Python]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - Use only with traffic and devices in an owned or explicitly authorized lab.
+  - engine_id: wireshark
+    name: Wireshark
+    description: Packet capture and network protocol analysis for authorized lab traffic.
+    platforms: [web, android, native]
+    roles: [traffic_analyzer]
+    capability_classes: [packet_capture, protocol_analysis]
+    repository_url: https://github.com/wireshark/wireshark
+    documentation_url: https://www.wireshark.org/docs/
+    integration_status: candidate
+    priority: P2
+    license: GPL-2.0
+    license_review_status: metadata_checked
+    maintenance_status: active_signal
+    last_repository_check: "2026-11-21"
+    supported_input_types: [pcap, pcapng]
+    expected_outputs: [packet_inventory, protocol_metadata]
+    network_requirement: owned_lab_only
+    isolation_profile: network_lab
+    runtime_requirements: [Wireshark/tshark]
+    resource_class: medium
+    dependencies: []
+    known_limitations:
+      - TLS payload visibility depends on authorized decryption material and capture configuration.
