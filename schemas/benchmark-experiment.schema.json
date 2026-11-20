@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/benchmark-experiment.schema.json",
+  "title": "ReverseLens Benchmark Experiment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_id", "name", "dataset_id", "target_ids", "engine_ids", "input_manifest_sha256", "methodology_version", "repetitions", "created_at", "status"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "experiment_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "dataset_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "target_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "engine_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "input_manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "methodology_version": { "type": "string", "minLength": 1, "maxLength": 32 },
+    "repetitions": { "type": "integer", "minimum": 1, "maximum": 50 },
+    "cache_policy": { "enum": ["cold_each_run", "warm_each_run", "mixed", "not_controlled"] },
+    "concurrency": { "type": "integer", "minimum": 1, "maximum": 128 },
+    "host_profile_id": { "type": "string", "maxLength": 128 },
+    "ground_truth_available": { "type": "boolean" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["draft", "queued", "running", "completed", "partial", "failed", "cancelled"] },
+    "notes": { "type": "string", "maxLength": 4000 }
+  }
+}
