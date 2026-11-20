@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "authorization_record_id": "auth-local-web-001",
+  "target_id": "target-web-demo-001",
+  "basis": "local_training_lab",
+  "basis_description": "Illustrative fixture representing a local deliberately vulnerable web training instance.",
+  "permitted_actions": [
+    "bounded_web_capture"
+  ],
+  "scope": {
+    "target_identifiers": [
+      "juice-shop.local"
+    ],
+    "allowed_hosts": [
+      "juice-shop.local"
+    ],
+    "allowed_path_prefixes": [
+      "/"
+    ],
+    "excluded_actions": [
+      "No production-target access",
+      "No authentication bypass",
+      "No off-host navigation"
+    ]
+  },
+  "evidence": [
+    {
+      "evidence_type": "lab_configuration",
+      "description": "Fictional example fixture, not actual authorization."
+    }
+  ],
+  "attestation": {
+    "confirmed": true,
+    "confirmed_by": "Example Fixture Author",
+    "confirmed_at": "2026-11-21T00:00:00Z",
+    "statement": "I confirm this is a fictional schema fixture for a locally deployed training application."
+  },
+  "created_at": "2026-11-21T00:00:00Z",
+  "status": "active",
+  "review_notes": "The operator must configure and isolate the local lab before use."
+}
