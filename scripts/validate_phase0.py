@@ -31,6 +31,8 @@ FIXTURE_SCHEMAS = {
     "example-finding.json": "finding.schema.json",
     "example-benchmark-experiment.json": "benchmark-experiment.schema.json",
     "example-benchmark-result.json": "benchmark-result.schema.json",
+    "example-benchmark-dataset.json": "benchmark-dataset.schema.json",
+    "example-ground-truth-item.json": "ground-truth-item.schema.json",
 }
 
 
@@ -73,6 +75,8 @@ def validate_all(root: Path = ROOT) -> list[str]:
         "finding.schema.json",
         "benchmark-experiment.schema.json",
         "benchmark-result.schema.json",
+        "benchmark-dataset.schema.json",
+        "ground-truth-item.schema.json",
     ]
     schemas: dict[str, dict[str, Any]] = {}
     for name in schema_names:
@@ -156,6 +160,8 @@ def validate_all(root: Path = ROOT) -> list[str]:
     finding = get_fixture("example-finding.json")
     experiment = get_fixture("example-benchmark-experiment.json")
     benchmark_result = get_fixture("example-benchmark-result.json")
+    dataset = get_fixture("example-benchmark-dataset.json")
+    ground_truth = get_fixture("example-ground-truth-item.json")
 
     for target, authorization, label in [
         (android_target, android_auth, "Android"),
@@ -203,6 +209,19 @@ def validate_all(root: Path = ROOT) -> list[str]:
             if engine_id not in engine_ids:
                 errors.append(f"Example benchmark references unknown engine {engine_id}")
 
+    if dataset and android_target:
+        if android_target.get("target_id") not in dataset.get("targets", []):
+            errors.append("Example dataset does not include the Android target")
+    if experiment and dataset:
+        if experiment.get("dataset_id") != dataset.get("dataset_id"):
+            errors.append("Example experiment references the wrong dataset")
+        if experiment.get("ground_truth_available") != dataset.get("ground_truth_available"):
+            errors.append("Example experiment and dataset disagree about ground truth availability")
+    if ground_truth and dataset:
+        if ground_truth.get("dataset_id") != dataset.get("dataset_id"):
+            errors.append("Example ground-truth item references the wrong dataset")
+        if ground_truth.get("target_id") not in dataset.get("targets", []):
+            errors.append("Example ground-truth item references a target outside its dataset")
     if benchmark_result:
         if experiment and benchmark_result.get("experiment_id") != experiment.get("experiment_id"):
             errors.append("Example benchmark result references the wrong experiment")
