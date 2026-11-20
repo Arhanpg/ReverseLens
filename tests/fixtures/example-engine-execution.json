@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "execution_id": "execution-demo-jadx-001",
+  "run_id": "run-demo-android-001",
+  "engine_id": "jadx",
+  "status": "partial",
+  "created_at": "2026-11-21T00:00:00Z",
+  "started_at": "2026-11-21T00:00:01Z",
+  "finished_at": "2026-11-21T00:00:03Z",
+  "tool_version": "illustrative-fixture-not-run",
+  "adapter_version": "0.0.0-fixture",
+  "configuration_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "exit_code": 0,
+  "duration_ms": 2000,
+  "resource_metrics": {
+    "peak_rss_bytes": 104857600,
+    "cpu_time_ms": 1500,
+    "read_bytes": 1000,
+    "write_bytes": 2000
+  },
+  "output_directory": "engines/jadx",
+  "output_artifact_ids": [
+    "artifact-demo-jadx-summary-001"
+  ],
+  "warnings": [
+    "Illustrative fixture only; no analyzer was executed."
+  ],
+  "error_summary": ""
+}
