@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_id": "experiment-demo-001",
+  "name": "Illustrative Android static pipeline benchmark",
+  "dataset_id": "local-android-fixtures-v1",
+  "target_ids": [
+    "target-android-demo-001"
+  ],
+  "engine_ids": [
+    "jadx",
+    "apktool",
+    "androguard",
+    "apkid"
+  ],
+  "input_manifest_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "methodology_version": "1.0.0",
+  "repetitions": 3,
+  "cache_policy": "cold_each_run",
+  "concurrency": 1,
+  "ground_truth_available": false,
+  "created_at": "2026-11-21T00:00:00Z",
+  "status": "draft",
+  "notes": "Fixture only; no results imply real tool performance."
+}
