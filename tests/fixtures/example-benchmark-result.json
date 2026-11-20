@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "result_id": "benchmark-result-demo-001",
+  "experiment_id": "experiment-demo-001",
+  "engine_id": "jadx",
+  "execution_id": "execution-demo-jadx-001",
+  "run_index": 1,
+  "status": "partial",
+  "metrics": {
+    "duration_ms": 2000,
+    "output_bytes": 64,
+    "output_file_count": 1
+  },
+  "ground_truth_reference": "",
+  "limitations": [
+    "Illustrative fixture only; accuracy metrics intentionally omitted because there is no ground truth."
+  ],
+  "created_at": "2026-11-21T00:00:03Z"
+}
