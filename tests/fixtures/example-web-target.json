@@ -10,7 +10,7 @@
     "url": "http://juice-shop.local/",
     "media_type": "text/html"
   },
-  "authorization_record_id": "auth-local-demo-001",
+  "authorization_record_id": "auth-local-web-001",
   "scope": {
     "allowed_hosts": [
       "juice-shop.local"
