@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "run-demo-android-001",
+  "target_id": "target-android-demo-001",
+  "selection_mode": "selected_subset",
+  "selected_engine_ids": [
+    "jadx",
+    "apktool",
+    "androguard",
+    "apkid"
+  ],
+  "status": "created",
+  "created_at": "2026-11-21T00:00:00Z",
+  "configuration": {
+    "profile": "android-static-baseline",
+    "max_concurrency": 2
+  },
+  "host_profile": {
+    "os": "Example Linux",
+    "architecture": "x86_64",
+    "cpu_model": "Example CPU",
+    "memory_bytes": 17179869184,
+    "runtime_versions": {
+      "java": "example",
+      "python": "example"
+    }
+  },
+  "notes": "Illustrative contract fixture; not a real execution."
+}
