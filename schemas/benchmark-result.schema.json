@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/benchmark-result.schema.json",
+  "title": "ReverseLens Benchmark Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "experiment_id", "engine_id", "execution_id", "run_index", "status", "metrics", "created_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "result_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "experiment_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "engine_id": { "type": "string", "minLength": 2, "maxLength": 64 },
+    "execution_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "run_index": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["succeeded", "partial", "failed", "timed_out", "cancelled", "incompatible"] },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "output_bytes"],
+      "properties": {
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "cpu_time_ms": { "type": "integer", "minimum": 0 },
+        "peak_rss_bytes": { "type": "integer", "minimum": 0 },
+        "output_bytes": { "type": "integer", "minimum": 0 },
+        "output_file_count": { "type": "integer", "minimum": 0 },
+        "precision": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "f1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_completeness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "duplicate_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "analyst_review_seconds": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ground_truth_reference": { "type": "string", "maxLength": 1024 },
+    "limitations": { "type": "array", "items": { "type": "string", "maxLength": 1000 } },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}
