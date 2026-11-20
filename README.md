@@ -24,7 +24,7 @@ ReverseLens is not another wrapper around one decompiler. It is a multi-engine w
 
 The Phase 0 workflow passed on the recorded commit: [GitHub Actions run](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). This validates repository contracts and fixtures; it does not mean any reverse-engineering engine has been installed or integrated.
 
-See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [benchmark methodology](docs/benchmark-methodology/README.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
+See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [benchmark methodology](docs/benchmark-methodology/README.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
 
 No engine integration is complete until it meets the Definition of Done in the development plan.
 
@@ -140,6 +140,9 @@ The validator checks JSON Schema contracts, registry entries, dependency referen
 - [Authorization policy](docs/legal-and-authorization/POLICY.md)
 - [Threat model](docs/threat-model/THREAT_MODEL.md)
 - [How to add an engine](docs/engine-registry/ADDING_AN_ENGINE.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
 - [Engine registry](engines/registry.yaml)
 - [OWASP Mobile Application Security Testing Guide](https://mas.owasp.org/MASTG/)
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
