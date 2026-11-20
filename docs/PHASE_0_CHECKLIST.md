@@ -11,7 +11,7 @@
 - [x] Define multi-engine principles and per-target/per-engine folder requirements.
 - [x] Create a machine-readable candidate engine registry with 25 candidates.
 - [x] Record capability categories, priority, input types, output types, network requirements, isolation profile, license-review status and limitations per engine.
-- [x] Create JSON Schema contracts for targets, authorization, engine definitions, registry, runs, executions, artifacts, observations, findings and benchmark records.
+- [x] Create JSON Schema contracts for targets, authorization, engine definitions, registry, runs, executions, artifacts, observations, findings, benchmark datasets, ground-truth items and benchmark results.
 - [x] Add example Android/web targets and example run/evidence records.
 - [x] Document architecture, benchmark methodology, legal/authorization policy and threat model.
 - [x] Record key architecture decisions as ADRs.
