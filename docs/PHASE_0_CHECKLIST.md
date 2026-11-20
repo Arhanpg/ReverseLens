@@ -17,6 +17,7 @@
 - [x] Record key architecture decisions as ADRs.
 - [x] Add a Phase 0 validation script, tests, developer dependencies and GitHub Actions workflow.
 - [x] Add repository hygiene rules so local workspaces and potentially sensitive analysis outputs are not committed.
+- [x] Add contribution guidance, security-reporting policy, code of conduct, pull-request template and Dependabot configuration.
 
 ## Validation performed
 
