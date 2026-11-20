@@ -20,6 +20,10 @@
 
 ## Validation performed
 
+<badge>Workflow run 44807176269 — success</badge>
+
+The GitHub Actions run for commit `4142902dbacbe80ad11c647d860cd9b36ee85423` completed successfully. The job steps for dependency installation, Phase 0 validation and pytest all reported success. See the [workflow run](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269).
+
 The GitHub Actions workflow is configured to:
 1. Install the pinned Python dependency ranges from `requirements-dev.txt`.
 2. Validate all JSON Schemas.
