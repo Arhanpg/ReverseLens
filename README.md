@@ -20,11 +20,13 @@ ReverseLens is not another wrapper around one decompiler. It is a multi-engine w
 
 ## Project status
 
-**Phase 0 completed — Phase 1 is ready to begin.** The repository now contains the architecture baseline, 13 JSON Schemas, a 25-candidate engine registry, sample records, a Phase 0 validator, pytest tests and GitHub Actions validation.
+**Phase 0 is on main. Phase 1 Android static MVP is implemented on the review branch** `feature/phase-1-android-mvp`. It adds a Spring Boot API, PostgreSQL/Flyway, Redis queue, isolated Python worker, independent JADX/Apktool/Androguard/APKiD jobs, bundletool AAB/APKS handling, SHA-256 artifact storage, a starter Next.js dashboard and CI. See [Phase 1 implementation](docs/phase-1/IMPLEMENTATION.md), [API](docs/phase-1/API.md), [testing guide](docs/phase-1/TESTING.md) and [review checklist](docs/PHASE_1_CHECKLIST.md).
+
+The Phase 1 workflow has passed the backend, worker and frontend checks on the initial implementation commit. A full end-to-end run against a representative authorized APK on maintainer hardware remains a manual acceptance item.
 
 The Phase 0 workflow passed on the recorded commit: [GitHub Actions run](https://github.com/Arhanpg/ReverseLens/actions/runs/44807176269). This validates repository contracts and fixtures; it does not mean any reverse-engineering engine has been installed or integrated.
 
-See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [benchmark methodology](docs/benchmark-methodology/README.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
+See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [Phase 1 implementation](docs/phase-1/IMPLEMENTATION.md), [Phase 1 testing](docs/phase-1/TESTING.md), [Phase 1 review checklist](docs/PHASE_1_CHECKLIST.md), [third-party notices](THIRD_PARTY_NOTICES_PHASE1.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [benchmark methodology](docs/benchmark-methodology/README.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
 
 No engine integration is complete until it meets the Definition of Done in the development plan.
 
