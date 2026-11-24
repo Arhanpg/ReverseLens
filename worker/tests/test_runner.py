@@ -3,7 +3,7 @@ import sys
 from reverselens_worker.engine_runner import run_command, select_base_split
 
 
-def test_runner_executes_argument_vector_without_shell():
+def test_runner_executes_argument_vector_without_shell(tmp_path):
     metrics_path = tmp_path / "wrapper-metrics.json"
     code, stdout, stderr, duration, metrics = run_command(
         [sys.executable, "-c", "print('worker-ok')"], timeout=10, metrics_path=metrics_path
