@@ -1,0 +1,31 @@
+server:
+  port: 8080
+  shutdown: graceful
+spring:
+  application:
+    name: reverselens-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/reverselens}
+    username: ${SPRING_DATASOURCE_USERNAME:reverselens}
+    password: ${SPRING_DATASOURCE_PASSWORD:reverselens}
+    hikari:
+      maximum-pool-size: 8
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 250MB
+      max-request-size: 260MB
+management:
+  endpoints.web.exposure.include: health,info
+reverselens:
+  workspace-root: ${REVERSE_LENS_WORKSPACE:/workspace}
+  worker-token: ${REVERSE_LENS_WORKER_TOKEN:local-worker-token-change-me}
+  frontend-origin: ${REVERSE_LENS_FRONTEND_ORIGIN:http://localhost:3000}
+  upload-max-bytes: 262144000
+  execution-queue: reverselens:analysis:jobs
