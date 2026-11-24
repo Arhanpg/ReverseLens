@@ -41,6 +41,11 @@ def test_example_targets_keep_android_and_web_separate():
     assert web["scope"]["local_lab"] is True
 
 
+def test_phase2_benchmark_fixtures_have_schema_mappings():
+    assert "example-benchmark-profile.json" in FIXTURE_SCHEMAS
+    assert "example-benchmark-observation.json" in FIXTURE_SCHEMAS
+
+
 def test_invalid_engine_status_is_rejected():
     import json
 

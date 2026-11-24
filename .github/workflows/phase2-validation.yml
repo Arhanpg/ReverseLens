@@ -1,0 +1,88 @@
+name: Phase 2 benchmark validation
+
+on:
+  push:
+    branches: [feature/phase-2-benchmark-engine]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    name: Phase 0 contracts and fixture validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install validator dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Validate schemas, registry and fixtures
+        run: python scripts/validate_phase0.py
+      - name: Run Phase 0 tests
+        run: python -m pytest tests -q
+
+  backend:
+    name: Benchmark API compile and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Maven verification
+        run: mvn -B -f backend/pom.xml verify
+
+  worker:
+    name: Benchmark worker tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: worker/requirements.txt
+      - name: Install worker and test dependencies
+        run: |
+          python -m pip install -r worker/requirements.txt
+          python -m pip install pytest
+      - name: Run worker tests
+        env:
+          PYTHONPATH: worker
+        run: python -m pytest worker/tests -q
+
+  frontend:
+    name: Benchmark Lab type check and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package.json
+      - name: Type check and production build
+        working-directory: frontend
+        run: |
+          npm install --no-audit --no-fund
+          npm run lint
+          npm run build
+
+  worker-image:
+    name: Validate Compose and build analyzer worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build and verify pinned analyzer image
+        run: docker build --pull -f worker/Dockerfile -t reverselens-worker:phase2 ./worker

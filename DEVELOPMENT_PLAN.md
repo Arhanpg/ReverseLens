@@ -1,7 +1,7 @@
 # ReverseLens — Master Development Plan
 
-> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.1 | Updated: 2026-11-24
-> Status: Phase 0 on main; Phase 1 Android static MVP implemented on review branch | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
+> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.2 | Updated: 2026-11-24
+> Status: Phase 0 and Phase 1 on main; Phase 2 Android benchmark engine implemented on review branch | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
 
 ## Phase 0 implementation status
 
@@ -354,38 +354,47 @@ Deliverables: final scope/non-goals; repository conventions; 10–15 candidate e
 Exit: no engine is adopted without role, license, compatibility, output contract and benchmark fixture plan.
 
 ### Phase 1 — Core platform and Android static MVP
-**Implementation branch:** `feature/phase-1-android-mvp`  
-**Status:** Implementation committed; backend, worker and frontend CI checks passed on the first implementation commit. Manual full APK integration check remains.
+**Implementation:** merged into `main` via PR #6 on 2026-11-24.  
+**Status:** Phase 1 CI passed; representative authorized APK integration remains a maintainer-side manual acceptance item.
 
-Delivered in the review branch:
-- Spring Boot 3.5.7 / Java 21 control-plane API.
-- PostgreSQL database and Flyway migration for targets, runs and engine executions.
-- Redis queue with enqueue after database commit.
-- Android APK/AAB/APKS upload with SHA-256 and authorization attestation.
-- Per-target/per-run workspace with immutable input snapshot and independent engine output trees.
-- Non-root Python worker, restricted network in Compose, subprocess timeouts and hash/path checks.
-- Independent APK adapters for JADX 1.5.7, Apktool 3.0.3, Androguard 4.1.4 and APKiD 3.2.0.
-- bundletool 1.18.3 AAB validation/manifest extraction and APKS split inventory.
-- Tool logs, per-engine result metadata, output inventory and hashes.
-- Minimal Next.js operator dashboard.
-- Backend, worker and frontend GitHub Actions jobs.
+Delivered:
+- Java 21 / Spring Boot API, PostgreSQL/Flyway and Redis queue.
+- Android APK/AAB/APKS upload, authorization attestation, SHA-256 and per-run snapshots.
+- Non-root local worker with isolated, independent JADX, Apktool, Androguard and APKiD APK runs.
+- bundletool AAB validation/manifest and APKS split inventory.
+- Per-engine raw outputs, logs, output hashes and run manifests.
+- Minimal Next.js upload/run dashboard.
+- Maven, worker, frontend and worker-image CI checks.
 
-Important limitations:
-- APKS split inventory is implemented, but full device-spec-based split generation and split-aware fan-out are not.
-- AAB receives bundletool validation and manifest extraction only.
-- Androguard adapter reports package/manifest metadata and DEX inventory; it is not a full Java decompiler.
-- APKiD is dual-licensed upstream; review exact terms before distributing the worker image.
-- Benchmarking, web analyzers, dynamic instrumentation, Flutter/Hermes/Ghidra specialists, graph explorer, multi-user auth and production hardening remain later phases.
-- CI does not run a real third-party APK integration sample. Run one authorized test APK locally before treating the complete Phase 1 acceptance checklist as closed.
+Limitations: APKS split-aware fan-out is not complete; Androguard produces metadata/DEX inventory rather than full Java reconstruction; APKiD dual-license terms require review before image distribution. Dynamic analysis and web capture remain later phases.
 
 See [Phase 1 implementation](docs/phase-1/IMPLEMENTATION.md), [API guide](docs/phase-1/API.md), [testing guide](docs/phase-1/TESTING.md) and [review checklist](docs/PHASE_1_CHECKLIST.md).
 
 ### Phase 2 — Benchmark engine and Android report quality
-**Estimate:** 2 weeks / 30–40 hours
+**Implementation branch:** `feature/phase-2-benchmark-engine`  
+**Status:** Implemented for review; CI and authorized APK end-to-end manual acceptance are the final review gates.
 
-Deliverables: benchmark schema; standard/custom engine profiles; repeatable runtime/RAM/disk/completion measurements; ground-truth labels; normalization and provenance; engine comparison UI; manifest/permission/component/string/endpoint views; evidence-based OWASP mapping; JSON/Markdown/HTML export.
+Delivered in Phase 2 v1:
+- PostgreSQL/Flyway datasets, target membership, profiles, ground-truth, experiments, attempts, normalized observations and results.
+- Built-in Android static, metadata, DEX recovery and App Bundle profiles; custom Android profiles using integrated engines.
+- Repeated independent Phase 1 runs per target × compatible engine × repetition.
+- 1–50 repetitions, maximum 250 attempts per experiment, sequential concurrency=1 and explicit incompatible states.
+- Capability-aware verified-ground-truth scoring, plus precision, recall, F1, coverage, duplicate rate and evidence completeness.
+- Normalized evidence for Androguard, Apktool, JADX, APKiD and bundletool, linked to raw engine output and SHA-256.
+- API-side evidence file/hash verification; host OS/architecture/CPU/RAM/runtime, tool and adapter provenance; wall/CPU/peak-RSS/output measurements.
+- Unique/shared recovery summaries, maintainer-provided OWASP tags, observation filtering and JSON/Markdown/HTML reports.
+- Benchmark Lab UI for dataset registration, ground-truth entry, experiment launch, scorecards and raw evidence access.
+- Phase 0 schemas/fixtures/validator extended with benchmark profile and observation contracts.
 
-Exit: same corpus runs across multiple engines and produces reproducible scorecards, unique recoveries, misses and failures.
+Phase 2 v1 boundaries:
+- Android only; web benchmarking is Phase 3.
+- Concurrency fixed to 1; cache policy is recorded but the OS cache is not flushed.
+- Ground-truth labels are maintainer curated. Only `verified` labels in capability classes supported by the engine are scored.
+- Normalizers are baseline extractors, not complete semantic parsers or source-line fidelity evaluators.
+- OWASP tags are supplied by maintainers and are not automatically inferred.
+- A real authorized APK experiment on maintainer hardware remains a manual acceptance item; CI uses tests/fixtures and does not claim that run.
+
+See [Phase 2 implementation](docs/phase-2/IMPLEMENTATION.md), [API guide](docs/phase-2/API.md), [testing guide](docs/phase-2/TESTING.md), [review checklist](docs/PHASE_2_CHECKLIST.md) and [benchmark methodology](docs/benchmark-methodology/README.md).
 
 ### Phase 3 — Web capture and JavaScript reconstruction
 **Estimate:** 3 weeks / 45–60 hours

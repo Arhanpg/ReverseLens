@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reverselens.dev/schemas/benchmark-observation.schema.json",
+  "title": "ReverseLens Normalized Benchmark Observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "observation_id", "execution_id", "capability_class", "item_type", "title", "observed_value", "canonical_key", "evidence_path", "evidence_sha256", "confidence"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "observation_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "execution_id": { "type": "string", "minLength": 3, "maxLength": 128 },
+    "capability_class": { "type": "string", "minLength": 2, "maxLength": 100 },
+    "item_type": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+    "observed_value": { "type": "string", "minLength": 1, "maxLength": 8000 },
+    "canonical_key": { "type": "string", "minLength": 2, "maxLength": 1000 },
+    "evidence_path": { "type": "string", "minLength": 1, "maxLength": 2048, "not": { "pattern": "(^/|^[A-Za-z]:|(^|/)\\.\\.(/|$))" } },
+    "evidence_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "confidence": { "enum": ["low", "medium", "high", "unknown"] },
+    "attributes": { "type": "object", "additionalProperties": true }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "observation_id": "observation-demo-0001",
+  "execution_id": "execution-demo-0001",
+  "capability_class": "manifest",
+  "item_type": "permission",
+  "title": "Android permission",
+  "observed_value": "android.permission.INTERNET",
+  "canonical_key": "permission:android.permission.internet",
+  "evidence_path": "raw/decoded/AndroidManifest.xml",
+  "evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "confidence": "high",
+  "attributes": {"source": "fixture-only"}
+}

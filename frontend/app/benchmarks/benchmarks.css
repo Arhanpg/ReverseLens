@@ -1,0 +1,9 @@
+.divider{height:1px;background:var(--line);margin:7px 0}
+.experiment-button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;margin:7px 0;background:#0c1424;color:var(--text);border:1px solid var(--line);font-weight:400}
+.experiment-button small,.result-line small{display:block;color:var(--muted);margin-top:4px;font-size:11px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+th{color:#b9d8f2;background:#0c1424}
+.result-line{padding:8px 0;border-bottom:1px solid var(--line);font-size:12px;overflow-wrap:anywhere}
+.result-line code{color:#a5dfff}

@@ -25,6 +25,31 @@ def report(api_url: str, token: str, execution_id: str, payload: dict) -> None:
     response.raise_for_status()
 
 
+def report_benchmark_data(api_url: str, token: str, execution_id: str, result: dict) -> None:
+    payload = {
+        "inputSha256": result.get("input_sha256"),
+        "metrics": {
+            "duration_ms": result.get("duration_ms"),
+            "cpu_time_ms": result.get("cpu_time_ms"),
+            "peak_rss_bytes": result.get("peak_rss_bytes"),
+            "output_bytes": result.get("output_bytes"),
+            "output_file_count": result.get("output_file_count"),
+            "host_profile": result.get("host_profile"),
+            "tool_version": result.get("engine_version"),
+            "adapter_version": result.get("adapter_version"),
+        },
+        "observations": result.get("observations", []),
+        "limitations": result.get("warnings", []),
+    }
+    response = requests.post(
+        f"{api_url.rstrip('/')}/internal/v1/worker/executions/{execution_id}/benchmark-data",
+        json=payload,
+        headers={"X-ReverseLens-Worker-Token": token},
+        timeout=30,
+    )
+    response.raise_for_status()
+
+
 def main() -> None:
     root = Path(os.getenv("WORKSPACE_ROOT", "/workspace")).resolve()
     redis_client = redis.Redis(host=os.getenv("REDIS_HOST", "redis"), port=int(os.getenv("REDIS_PORT", "6379")),
@@ -45,6 +70,7 @@ def main() -> None:
                 report(api_url, token, execution_id, {"status": "running", "toolVersion": None,
                     "exitCode": None, "durationMs": None, "outputBytes": None, "errorSummary": None})
                 result = execute(job, root)
+                report_benchmark_data(api_url, token, execution_id, result)
                 report(api_url, token, execution_id, {"status": result["status"], "toolVersion": result["toolVersion"],
                     "exitCode": result["exit_code"], "durationMs": result["duration_ms"],
                     "outputBytes": result["output_bytes"], "errorSummary": result["errorSummary"]})
