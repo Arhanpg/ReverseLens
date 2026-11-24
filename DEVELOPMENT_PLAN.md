@@ -1,7 +1,7 @@
 # ReverseLens — Master Development Plan
 
-> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.0 | Updated: 2026-11-21
-> Status: Phase 0 completed; Phase 1 ready | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
+> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.1 | Updated: 2026-11-24
+> Status: Phase 0 on main; Phase 1 Android static MVP implemented on review branch | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
 
 ## Phase 0 implementation status
 
@@ -354,11 +354,31 @@ Deliverables: final scope/non-goals; repository conventions; 10–15 candidate e
 Exit: no engine is adopted without role, license, compatibility, output contract and benchmark fixture plan.
 
 ### Phase 1 — Core platform and Android static MVP
-**Estimate:** 3 weeks / 45–60 hours
+**Implementation branch:** `feature/phase-1-android-mvp`  
+**Status:** Implementation committed; backend, worker and frontend CI checks passed on the first implementation commit. Manual full APK integration check remains.
 
-Deliverables: Next.js shell; Spring Boot project/job API; PostgreSQL and Redis; local artifact upload and SHA-256; per-target/per-run workspace; engine registry/queue; isolated baseline workers; integrate JADX, Apktool, Androguard and APKiD; test AAB/APKS processing with bundletool; preserve logs/version/config/status/output inventory; separate raw folders; basic APK report.
+Delivered in the review branch:
+- Spring Boot 3.5.7 / Java 21 control-plane API.
+- PostgreSQL database and Flyway migration for targets, runs and engine executions.
+- Redis queue with enqueue after database commit.
+- Android APK/AAB/APKS upload with SHA-256 and authorization attestation.
+- Per-target/per-run workspace with immutable input snapshot and independent engine output trees.
+- Non-root Python worker, restricted network in Compose, subprocess timeouts and hash/path checks.
+- Independent APK adapters for JADX 1.5.7, Apktool 3.0.3, Androguard 4.1.4 and APKiD 3.2.0.
+- bundletool 1.18.3 AAB validation/manifest extraction and APKS split inventory.
+- Tool logs, per-engine result metadata, output inventory and hashes.
+- Minimal Next.js operator dashboard.
+- Backend, worker and frontend GitHub Actions jobs.
 
-Exit: one known test APK runs through at least four independent engines; outputs are separate/downloadable; one engine failure does not cancel others; every output is traceable to input hash and engine version.
+Important limitations:
+- APKS split inventory is implemented, but full device-spec-based split generation and split-aware fan-out are not.
+- AAB receives bundletool validation and manifest extraction only.
+- Androguard adapter reports package/manifest metadata and DEX inventory; it is not a full Java decompiler.
+- APKiD is dual-licensed upstream; review exact terms before distributing the worker image.
+- Benchmarking, web analyzers, dynamic instrumentation, Flutter/Hermes/Ghidra specialists, graph explorer, multi-user auth and production hardening remain later phases.
+- CI does not run a real third-party APK integration sample. Run one authorized test APK locally before treating the complete Phase 1 acceptance checklist as closed.
+
+See [Phase 1 implementation](docs/phase-1/IMPLEMENTATION.md), [API guide](docs/phase-1/API.md), [testing guide](docs/phase-1/TESTING.md) and [review checklist](docs/PHASE_1_CHECKLIST.md).
 
 ### Phase 2 — Benchmark engine and Android report quality
 **Estimate:** 2 weeks / 30–40 hours
