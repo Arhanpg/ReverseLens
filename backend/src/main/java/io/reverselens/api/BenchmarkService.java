@@ -263,7 +263,7 @@ class BenchmarkService {
    if(!hash.matches("(?i)^[a-f0-9]{64}$"))throw bad("Observation evidence SHA-256 is invalid.");
    Path evidence=workspace.resolve(outputDir+"/"+path);
    try {
-    Path realRoot=workspace.root().toRealPath();
+    Path realRoot=workspace.resolve("").toRealPath();
     Path realEvidence=evidence.toRealPath();
     if(!realEvidence.startsWith(realRoot)||Files.isSymbolicLink(evidence)||!Files.isRegularFile(realEvidence,LinkOption.NOFOLLOW_LINKS))throw bad("Observation evidence file is missing or unsafe.");
     if(!sha256File(realEvidence).equalsIgnoreCase(hash))throw bad("Observation evidence SHA-256 does not match the stored file.");
@@ -475,7 +475,8 @@ class BenchmarkService {
  private Map<String,Object> observationMap(java.sql.ResultSet rs)throws java.sql.SQLException{
   Map<String,Object> m=new LinkedHashMap<>();
   m.put("observationId",rs.getObject("id",UUID.class).toString());m.put("attemptId",rs.getObject("attempt_id",UUID.class).toString());
-  m.put("executionId",rs.getObject("execution_id",UUID.class).toString());m.put("targetId",rs.getObject("target_id",UUID.class).toString());
+  m.put("executionId",rs.getObject("execution_id",UUID.class).toString());
+  String targetId=rs.getObject("target_id",UUID.class).toString();m.put("targetId",targetId);
   m.put("engineId",rs.getString("engine_id"));m.put("repetition",rs.getInt("repetition"));
   m.put("capabilityClass",rs.getString("capability_class"));m.put("itemType",rs.getString("item_type"));
   m.put("title",rs.getString("title"));m.put("observedValue",rs.getString("observed_value"));
@@ -509,7 +510,8 @@ class BenchmarkService {
   }
   s.append("\nN/A means no verified capability-compatible ground truth was available; missing metrics are not zero.\n\n");
   s.append("## Maintainer-provided OWASP mappings\n\n");
-  List<?> owasp=(List<?>)summary.getOrDefault("owaspMappings",List.of());
+  Object owaspValue=summary.get("owaspMappings");
+  List<?> owasp=owaspValue instanceof List<?> values?values:List.of();
   for(Object tag:owasp)s.append("- ").append(tag).append("\n");
   if(owasp.isEmpty())s.append("No OWASP mappings were supplied on verified ground-truth labels.\n");
   s.append("\n## Unique recoveries\n\n");

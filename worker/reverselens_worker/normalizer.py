@@ -178,7 +178,8 @@ def _source_strings(root: Path, rows: list[dict]) -> None:
         seen_strings: set[str] = set()
         for match in literal_pattern.finditer(content):
             value = match.group(1).strip()
-            context = content[max(0, match.start() - 120):match.start()]
+            line_start = content.rfind("\\n", 0, match.start()) + 1
+            context = content[line_start:match.start()]
             if len(value) < 4 or value in seen_strings or secret_pattern.search(context) or secret_pattern.search(value):
                 continue
             if "://" in value or re.fullmatch(r"[A-Za-z0-9+/=_-]{40,}", value):

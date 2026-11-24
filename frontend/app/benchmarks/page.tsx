@@ -4,7 +4,8 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api/v1";
 type Target = { id: string; displayName: string; originalFilename: string; sha256: string; sizeBytes: number };
-type Dataset = { datasetId: string; name: string; targets: Target[] };
+type DatasetTarget = { targetId: string; displayName: string; filename: string; sha256: string; sizeBytes: number };
+type Dataset = { datasetId: string; name: string; targets: DatasetTarget[] };
 type Profile = { profileKey: string; name: string; platform: string; engineIds: string[]; defaultRepetitions: number; builtIn: boolean };
 type Attempt = { attemptId: string; targetId: string; engineId: string; repetition: number; status: string; toolVersion?: string; adapterVersion?: string; durationMs?: number; cpuTimeMs?: number; peakRssBytes?: number; outputBytes?: number; precision?: number | null; recall?: number | null; f1?: number | null; coverage?: number | null; observationCount?: number; runId?: string; workerMetrics?: Record<string, unknown> };
 type Observation = { observationId: string; runId: string; runFilePath?: string; engineId: string; repetition: number; capabilityClass: string; itemType: string; title: string; observedValue: string; canonicalKey: string; evidencePath: string; evidenceSha256: string; confidence: string };

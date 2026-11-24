@@ -4,10 +4,14 @@ from reverselens_worker.engine_runner import run_command, select_base_split
 
 
 def test_runner_executes_argument_vector_without_shell():
-    code, stdout, stderr, duration = run_command([sys.executable, "-c", "print('worker-ok')"], timeout=10)
+    metrics_path = tmp_path / "wrapper-metrics.json"
+    code, stdout, stderr, duration, metrics = run_command(
+        [sys.executable, "-c", "print('worker-ok')"], timeout=10, metrics_path=metrics_path
+    )
     assert code == 0
     assert "worker-ok" in stdout
     assert duration >= 0
+    assert metrics["wall_time_ms"] >= 0
 
 
 def test_base_split_prefers_base_named_apk(tmp_path):
