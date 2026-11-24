@@ -23,6 +23,8 @@ ARG BUNDLETOOL_VERSION=1.18.3
 ARG BUNDLETOOL_SHA256=a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29
 RUN curl -fsSL "https://github.com/google/bundletool/releases/download/${BUNDLETOOL_VERSION}/bundletool-all-${BUNDLETOOL_VERSION}.jar" -o /opt/bundletool.jar && \
     echo "${BUNDLETOOL_SHA256}  /opt/bundletool.jar" | sha256sum -c -
+RUN jadx --help >/dev/null && apktool --version >/dev/null && apkid --help >/dev/null && \
+    python -c "from androguard.core.apk import APK; print('Androguard import OK')"
 
 RUN useradd --system --uid 10001 --create-home worker && mkdir -p /workspace /tmp/reverselens && \
     chown -R 10001:10001 /workspace /tmp/reverselens /opt/venv
