@@ -90,7 +90,7 @@ def execute(job: dict, workspace_root: Path) -> dict:
                 commands = [
                     ["java", "-jar", "/opt/bundletool.jar", "validate", f"--bundle={input_path}"],
                     ["java", "-jar", "/opt/bundletool.jar", "dump", "manifest",
-                     f"--bundle={input_path}", f"--output={raw_dir / 'manifest.xml'}"]
+                     f"--bundle={input_path}", "--module=base"]
                 ]
             else:
                 raise ValueError(f"Engine {engine_id} does not support format {fmt}")
@@ -99,6 +99,8 @@ def execute(job: dict, workspace_root: Path) -> dict:
             duration_ms += elapsed
             (logs_dir / f"command-{index}.stdout.txt").write_text(stdout, encoding="utf-8")
             (logs_dir / f"command-{index}.stderr.txt").write_text(stderr, encoding="utf-8")
+            if engine_id == "bundletool" and fmt == "aab" and "manifest" in command and code == 0:
+                (raw_dir / "manifest.xml").write_text(stdout, encoding="utf-8")
             if code != 0:
                 exit_code = code
                 status = "timed_out" if code == 124 else ("partial" if index > 1 and any(raw_dir.iterdir()) else "failed")
