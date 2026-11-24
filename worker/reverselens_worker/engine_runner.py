@@ -18,7 +18,8 @@ TOOL_VERSIONS = {"jadx": "1.5.7", "apktool": "3.0.3", "androguard": "4.1.4", "ap
 
 def run_command(command: list[str], timeout: int, metrics_path: Path) -> tuple[int, str, str, int, dict]:
     started = time.monotonic()
-    wrapper = [sys.executable, "/app/reverselens_worker/resource_wrapper.py",
+    wrapper_path = Path(__file__).with_name("resource_wrapper.py")
+    wrapper = [sys.executable, str(wrapper_path),
                "--metrics", str(metrics_path), "--timeout", str(timeout), "--", *command]
     process = subprocess.Popen(wrapper, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                text=True, errors="replace", start_new_session=True,
