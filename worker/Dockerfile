@@ -11,7 +11,7 @@ ARG JADX_VERSION=1.5.7
 ARG JADX_SHA256=1755e4242ade71a077438723689f404079592ec7764a3a0572f98fef94ebcbf3
 RUN curl -fsSL "https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip" -o /tmp/jadx.zip && \
     echo "${JADX_SHA256}  /tmp/jadx.zip" | sha256sum -c - && mkdir -p /opt/jadx && \
-    unzip -q /tmp/jadx.zip -d /opt/jadx && ln -s /opt/jadx/jadx-${JADX_VERSION}/bin/jadx /usr/local/bin/jadx && rm /tmp/jadx.zip
+    unzip -q /tmp/jadx.zip -d /opt/jadx && ln -s /opt/jadx/bin/jadx /usr/local/bin/jadx && rm /tmp/jadx.zip
 
 ARG APKTOOL_VERSION=3.0.3
 ARG APKTOOL_SHA256=dbf930b076c6b9be08d57c449cacefc3bdd6b71ebd59b3066fc0e1f5b14f9423
