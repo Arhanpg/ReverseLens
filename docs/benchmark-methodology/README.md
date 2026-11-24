@@ -100,3 +100,51 @@ Every benchmark report should include:
 - Known limitations and confidence statement.
 
 Do not publish a single weighted winner until weighting is justified, documented and sensitivity-tested. Publish the metric vector first.
+
+
+## 8. Phase 2 implementation notes (Android v1)
+
+Phase 2 executes integrated Android tools as independent attempts. One benchmark attempt represents one dataset target, one engine, and one repetition, mapped to a normal Phase 1 run and execution ID. Raw engine evidence remains in the Phase 1 run workspace.
+
+### Dataset and labels
+
+Datasets reference uploaded targets by UUID and record source type, version, capability classes, source/revision provenance, license and redistribution review. Ground-truth records are target- and capability-specific. Only labels marked `verified` contribute to precision, recall, F1 and coverage; unreviewed, reviewed, disputed and not-applicable labels remain visible but are not scored.
+
+OWASP MASVS/MASTG tags are maintainer-supplied ground-truth annotations. ReverseLens does not infer a control mapping automatically from an observation label.
+
+### Execution controls
+
+- Built-in Android profiles cover static core, package metadata, DEX recovery and App Bundle inspection.
+- Repetitions: 1–50, default 3.
+- Concurrency is fixed at 1 in Phase 2 v1 to reduce resource contention between analyzers.
+- Cache policy is recorded but the worker does not flush the operating-system filesystem cache. Declare `not_controlled` unless an external lab process controls cache state.
+- Experiments are capped at 250 target × engine × repetition attempts.
+- Unsupported engine/format combinations are recorded as `incompatible` and excluded from success and accuracy denominators.
+
+### Metrics and provenance
+
+Worker outputs record wall time, child-process CPU time, peak RSS estimate, output bytes/file count, normalized observation count, host OS/architecture/CPU/RAM/runtime, tool/adapter versions, status and warnings. Peak RSS uses Linux child-process resource accounting, not an OS-wide hardware monitor.
+
+Normalized observations include capability class, type, canonical key, confidence and raw evidence path/SHA-256. The API verifies that evidence resolves to a real file beneath the per-run workspace and that its SHA-256 matches the worker declaration.
+
+Precision/recall/F1/coverage are null when there is no verified ground truth for a capability class the tool supports. Observations in unlabelled capabilities remain visible but are not treated as false positives. If verified applicable labels exist and no expected items are recovered, scores are zero. Duplicate rate and evidence completeness are separately measured.
+
+The experiment input manifest hash binds target hashes, selected tools, repetitions, cache policy and methodology version.
+
+### Android v1 normalizers
+
+| Engine | Baseline normalized evidence |
+|---|---|
+| Androguard | Package name, permissions, manifest components and DEX entry inventory |
+| Apktool | Manifest permissions/components and bounded Smali class/method declarations |
+| JADX | Java class/method declarations, client-visible URL strings and selected client string literals |
+| APKiD | Compiler, packer and protector fingerprints present in the JSON output |
+| bundletool | AAB manifest permission/component items and APKS split inventory |
+
+This is a deterministic baseline evidence normalizer, not a complete semantic parser. It does not claim full source recovery, line-level mappings, call-graph equivalence, or server-side code access.
+
+### Reports
+
+JSON, Markdown and HTML outputs include experiment/dataset metadata, input manifest hash, repetitions/cache policy, per-engine scorecards, tool/adapter versions, resource measurements, attempt statuses, unique/shared recoveries, misses/false positives, normalized evidence references and maintainer-supplied OWASP tags.
+
+A single weighted “winner” score is intentionally not produced; capability classes and metric trade-offs remain visible.

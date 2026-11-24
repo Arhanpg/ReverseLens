@@ -16,3 +16,25 @@ def test_base_split_prefers_base_named_apk(tmp_path):
     locale.touch()
     base.touch()
     assert select_base_split([locale, base]) == base
+
+
+
+def test_resource_wrapper_records_wall_and_cpu_metrics(tmp_path):
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    wrapper = Path(__file__).parents[1] / "reverselens_worker" / "resource_wrapper.py"
+    metrics = tmp_path / "metrics.json"
+    result = subprocess.run(
+        [sys.executable, str(wrapper), "--metrics", str(metrics), "--timeout", "5",
+         "--", sys.executable, "-c", "print('benchmark-wrapper-ok')"],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 0
+    assert "benchmark-wrapper-ok" in result.stdout
+    recorded = json.loads(metrics.read_text())
+    assert recorded["wall_time_ms"] >= 0
+    assert recorded["cpu_time_ms"] >= 0
+    assert recorded["peak_rss_bytes"] >= 0

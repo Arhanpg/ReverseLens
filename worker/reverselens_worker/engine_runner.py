@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import signal
 import subprocess
 import sys
@@ -9,29 +10,37 @@ import time
 from pathlib import Path
 
 from .security import extract_apks_safely, inventory_files, safe_workspace_path, sha256_file
+from .normalizer import normalize_engine
 
 ADAPTER_VERSION = "0.1.0"
 TOOL_VERSIONS = {"jadx": "1.5.7", "apktool": "3.0.3", "androguard": "4.1.4", "apkid": "3.2.0", "bundletool": "1.18.3"}
 
 
-def run_command(command: list[str], timeout: int = 900) -> tuple[int, str, str, int]:
+def run_command(command: list[str], timeout: int, metrics_path: Path) -> tuple[int, str, str, int, dict]:
     started = time.monotonic()
-    process = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, errors="replace",
-        start_new_session=True,
-        env={"PATH": os.environ.get("PATH", "/opt/venv/bin:/usr/local/bin:/usr/bin:/bin"),
-             "HOME": "/tmp", "LANG": "C.UTF-8", "PYTHONUNBUFFERED": "1"}
-    )
+    wrapper = [sys.executable, "/app/reverselens_worker/resource_wrapper.py",
+               "--metrics", str(metrics_path), "--timeout", str(timeout), "--", *command]
+    process = subprocess.Popen(wrapper, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               text=True, errors="replace", start_new_session=True,
+                               env={"PATH": os.environ.get("PATH", "/opt/venv/bin:/usr/local/bin:/usr/bin:/bin"),
+                                    "HOME": "/tmp", "LANG": "C.UTF-8", "PYTHONUNBUFFERED": "1"})
     try:
-        stdout, stderr = process.communicate(timeout=timeout)
-        return process.returncode or 0, stdout, stderr, int((time.monotonic() - started) * 1000)
+        stdout, stderr = process.communicate(timeout=timeout + 20)
+        code = process.returncode or 0
     except subprocess.TimeoutExpired:
         try:
             os.killpg(process.pid, signal.SIGKILL)
         except ProcessLookupError:
             pass
         stdout, stderr = process.communicate()
-        return 124, stdout or "", (stderr or "") + "\nReverseLens: engine timed out.", int((time.monotonic() - started) * 1000)
+        code = 124
+        stderr = (stderr or "") + "\\nReverseLens: resource wrapper timed out."
+    elapsed = max(0, int((time.monotonic() - started) * 1000))
+    try:
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        metrics = {}
+    return code, stdout or "", stderr or "", elapsed, metrics
 
 
 def write_json(path: Path, data: dict) -> None:
@@ -40,6 +49,34 @@ def write_json(path: Path, data: dict) -> None:
 
 def select_base_split(splits: list[Path]) -> Path:
     return next((p for p in splits if "base" in p.name.lower()), splits[0])
+
+
+def host_profile() -> dict:
+    cpu_model = platform.processor() or platform.machine()
+    try:
+        for line in Path("/proc/cpuinfo").read_text(encoding="utf-8", errors="replace").splitlines():
+            if line.lower().startswith("model name") and ":" in line:
+                cpu_model = line.split(":", 1)[1].strip()
+                break
+    except OSError:
+        pass
+    memory_bytes = None
+    try:
+        for line in Path("/proc/meminfo").read_text(encoding="utf-8").splitlines():
+            if line.startswith("MemTotal:"):
+                memory_bytes = int(line.split()[1]) * 1024
+                break
+    except (OSError, ValueError, IndexError):
+        pass
+    return {
+        "os": platform.platform(),
+        "architecture": platform.machine(),
+        "cpu_model": cpu_model[:200],
+        "memory_bytes": memory_bytes,
+        "python_version": platform.python_version(),
+        "processor_count": os.cpu_count(),
+        "containerized": Path("/.dockerenv").exists(),
+    }
 
 
 def execute(job: dict, workspace_root: Path) -> dict:
@@ -56,8 +93,10 @@ def execute(job: dict, workspace_root: Path) -> dict:
     raw_dir.mkdir()
     logs_dir.mkdir()
     fmt = str(job.get("inputFormat", "")).lower()
+    machine_profile = host_profile()
     warnings: list[str] = []
     status, exit_code, duration_ms = "succeeded", 0, 0
+    cpu_time_ms, peak_rss_bytes = 0, 0
     tool_version = TOOL_VERSIONS.get(engine_id, "unknown")
     effective_input = input_path
     commands: list[list[str]] = []
@@ -95,8 +134,11 @@ def execute(job: dict, workspace_root: Path) -> dict:
             else:
                 raise ValueError(f"Engine {engine_id} does not support format {fmt}")
         for index, command in enumerate(commands, start=1):
-            code, stdout, stderr, elapsed = run_command(command)
+            metrics_path = logs_dir / f"command-{index}.metrics.json"
+            code, stdout, stderr, elapsed, command_metrics = run_command(command, 900, metrics_path)
             duration_ms += elapsed
+            cpu_time_ms += int(command_metrics.get("cpu_time_ms", 0) or 0)
+            peak_rss_bytes = max(peak_rss_bytes, int(command_metrics.get("peak_rss_bytes", 0) or 0))
             (logs_dir / f"command-{index}.stdout.txt").write_text(stdout, encoding="utf-8")
             (logs_dir / f"command-{index}.stderr.txt").write_text(stderr, encoding="utf-8")
             if engine_id == "bundletool" and fmt == "aab" and "manifest" in command and code == 0:
@@ -110,6 +152,13 @@ def execute(job: dict, workspace_root: Path) -> dict:
         status, exit_code = "failed", 1
         warnings.append(f"{type(exc).__name__}: {exc}")
 
+    observations = normalize_engine(engine_id, output_dir)
+    for observation in observations:
+        observation["schema_version"] = "1.0.0"
+        observation["execution_id"] = str(job.get("executionId"))
+    (output_dir / "normalized-observations.json").write_text(
+        json.dumps(observations, indent=2, sort_keys=True), encoding="utf-8"
+    )
     artifacts = inventory_files(output_dir)
     output_bytes = sum(item["size_bytes"] for item in artifacts)
     if not artifacts:
@@ -119,9 +168,13 @@ def execute(job: dict, workspace_root: Path) -> dict:
         "schema_version": "1.0.0", "execution_id": job.get("executionId"), "run_id": job.get("runId"),
         "engine_id": engine_id, "engine_version": tool_version, "adapter_version": ADAPTER_VERSION,
         "input_sha256": actual_hash, "status": status, "exit_code": exit_code,
-        "duration_ms": duration_ms, "output_bytes": output_bytes, "artifact_count": len(artifacts),
+        "duration_ms": duration_ms, "cpu_time_ms": cpu_time_ms, "peak_rss_bytes": peak_rss_bytes,
+        "host_profile": machine_profile,
+        "output_bytes": output_bytes, "output_file_count": len(artifacts),
+        "artifact_count": len(artifacts), "observation_count": len(observations),
         "warnings": warnings, "artifacts": artifacts, "completed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     }
     write_json(output_dir / "engine-result.json", result)
-    return {**result, "output_directory": str(job.get("outputDirectory")),
+    return {**result, "observations": observations, "host_profile": machine_profile,
+            "output_directory": str(job.get("outputDirectory")),
             "toolVersion": tool_version, "errorSummary": "; ".join(warnings)[:4000]}

@@ -65,7 +65,7 @@ export default function Home() {
     finally{setBusy(false);}
   }
   return <main>
-    <header><div><div className="pill">Phase 1 · Android static MVP</div><h1>ReverseLens</h1><p>Run independent analyzers against artifacts you own or are authorized to assess.</p></div><button type="button" onClick={()=>refresh().catch(e=>setError(e.message))}>Refresh</button></header>
+    <header><div><div className="pill">Phase 1 · Android static MVP</div><h1>ReverseLens</h1><p>Run independent analyzers against artifacts you own or are authorized to assess.</p></div><div className="row"><a href="/benchmarks" className="muted">Benchmark Lab</a><button type="button" onClick={()=>refresh().catch(e=>setError(e.message))}>Refresh</button></div></header>
     {message&&<p className="success">{message}</p>}{error&&<p className="error">{error}</p>}
     <div className="grid">
       <section className="panel stack">

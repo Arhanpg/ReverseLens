@@ -33,6 +33,8 @@ FIXTURE_SCHEMAS = {
     "example-benchmark-result.json": "benchmark-result.schema.json",
     "example-benchmark-dataset.json": "benchmark-dataset.schema.json",
     "example-ground-truth-item.json": "ground-truth-item.schema.json",
+    "example-benchmark-profile.json": "benchmark-profile.schema.json",
+    "example-benchmark-observation.json": "benchmark-observation.schema.json",
 }
 
 
@@ -77,6 +79,8 @@ def validate_all(root: Path = ROOT) -> list[str]:
         "benchmark-result.schema.json",
         "benchmark-dataset.schema.json",
         "ground-truth-item.schema.json",
+        "benchmark-profile.schema.json",
+        "benchmark-observation.schema.json",
     ]
     schemas: dict[str, dict[str, Any]] = {}
     for name in schema_names:
@@ -242,7 +246,7 @@ def main() -> int:
     registry = yaml.safe_load(REGISTRY_PATH.read_text(encoding="utf-8"))
     print(
         "Phase 0 validation passed: "
-        f"13 JSON Schemas, {len(registry['engines'])} candidate engines, "
+        f"{len(list(SCHEMA_DIR.glob('*.schema.json')))} JSON Schemas, {len(registry['engines'])} candidate engines, "
         f"{len(FIXTURE_SCHEMAS)} example fixtures and cross-record references."
     )
     print("No reverse-engineering tools were installed or executed by this validation.")

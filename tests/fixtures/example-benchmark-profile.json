@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "profile_key": "android-static-core",
+  "name": "Android static core",
+  "platform": "android",
+  "capability_classes": ["apk_parsing", "dex_analysis", "dex_to_source", "android_resources", "manifest", "smali", "packer_detection"],
+  "engine_ids": ["jadx", "apktool", "androguard", "apkid"],
+  "default_repetitions": 3,
+  "default_concurrency": 1,
+  "description": "Independent baseline Android analyzers, sequential execution for reproducible resource measurement."
+}

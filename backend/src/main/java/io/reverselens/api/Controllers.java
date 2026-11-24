@@ -60,12 +60,14 @@ class RunController {
 @RestController
 @RequestMapping("/internal/v1/worker/executions")
 class WorkerController {
-  private final RunService runs;private final String token;
-  WorkerController(RunService r,@Value("${reverselens.worker-token}")String token){runs=r;this.token=token;}
+  private final RunService runs;private final BenchmarkService benchmarks;private final String token;
+  WorkerController(RunService r,BenchmarkService b,@Value("${reverselens.worker-token}")String token){runs=r;benchmarks=b;this.token=token;}
   @PutMapping("/{id}") void update(@PathVariable UUID id,@RequestHeader("X-ReverseLens-Worker-Token")String supplied,@RequestBody WorkerUpdate body){
     if(!MessageDigest.isEqual(token.getBytes(StandardCharsets.UTF_8),supplied.getBytes(StandardCharsets.UTF_8)))
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Worker token rejected");
     runs.update(id,body);
+    if("running".equals(body.status()))benchmarks.executionStarted(id);
+    else benchmarks.finalizeExecution(id);
   }
 }
 
