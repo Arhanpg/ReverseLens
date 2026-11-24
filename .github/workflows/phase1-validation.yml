@@ -53,3 +53,13 @@ jobs:
           npm install --no-audit --no-fund
           npm run lint
           npm run build
+
+  worker-image:
+    name: Build and verify pinned Android tool image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build worker image and verify installed tools
+        run: docker build --pull -f worker/Dockerfile -t reverselens-worker:ci ./worker
