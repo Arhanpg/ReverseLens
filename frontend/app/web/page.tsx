@@ -137,11 +137,13 @@ export default function WebCapturePage() {
               <select value={localLab ? "local_training_lab" : basis} disabled={localLab} onChange={(event) => setBasis(event.target.value)}>
                 <option value="owner_or_developer">I own or develop this site</option>
                 <option value="written_permission">Written permission</option>
+                <option value="bug_bounty_scope">Bug bounty scope</option>
                 <option value="lawful_possession_or_access">Lawful access</option>
+                <option value="other_documented_basis">Other documented basis</option>
                 <option value="local_training_lab">Local training lab</option>
               </select>
             </label>
-            <label>Authorization reference / scope note<textarea required value={authorizationReference} onChange={(event) => setAuthorizationReference(event.target.value)} rows={3} placeholder="Ticket, written scope, lab name, or authorization record reference" /></label>
+            <label>Authorization reference / scope note<textarea required minLength={10} value={authorizationReference} onChange={(event) => setAuthorizationReference(event.target.value)} rows={3} placeholder="Ticket, written scope, lab name, or authorization record reference" /></label>
             <label>Authorization expires at<input required type="datetime-local" value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} /></label>
             <label className="engine"><input type="checkbox" checked={localLab} onChange={(event) => setLocalLab(event.target.checked)} />Developer-controlled local training lab (private/loopback exception).</label>
             <label className="engine"><input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />I confirm I own this target or have explicit permission for this exact scope.</label>

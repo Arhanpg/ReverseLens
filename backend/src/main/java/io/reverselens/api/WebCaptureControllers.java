@@ -57,7 +57,7 @@ record NormalizedWebTarget(
 
 final class WebTargetValidation {
     private static final Set<String> AUTHORIZATION_BASES = Set.of(
-        "owner_or_developer", "written_permission", "local_training_lab", "lawful_possession_or_access"
+        "owner_or_developer", "written_permission", "bug_bounty_scope", "local_training_lab", "lawful_possession_or_access", "other_documented_basis"
     );
     private WebTargetValidation() {}
 
@@ -69,6 +69,7 @@ final class WebTargetValidation {
         String basis = requireText(request.authorizationBasis(), "Authorization basis", 64);
         if (!AUTHORIZATION_BASES.contains(basis)) throw new IllegalArgumentException("A supported authorization basis is required.");
         String reference = requireText(request.authorizationReference(), "Authorization reference", 2000);
+        if (reference.length() < 10) throw new IllegalArgumentException("Authorization reference must contain at least 10 characters.");
         Instant expires = request.authorizationExpiresAt();
         if (expires == null || !expires.isAfter(now)) throw new IllegalArgumentException("Authorization expiry must be in the future.");
         if (expires.isAfter(now.plus(Duration.ofDays(30)))) throw new IllegalArgumentException("Authorization expiry cannot be more than 30 days ahead.");

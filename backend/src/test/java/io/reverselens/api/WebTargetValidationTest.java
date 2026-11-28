@@ -29,6 +29,30 @@ class WebTargetValidationTest {
     }
 
     @Test
+    void supportsAllAuthorizationBasesDefinedByTheRepositoryPolicy() {
+        Instant now = Instant.now();
+        for (String basis : List.of("owner_or_developer", "written_permission", "bug_bounty_scope",
+                "local_training_lab", "lawful_possession_or_access", "other_documented_basis")) {
+            NormalizedWebTarget value = WebTargetValidation.normalize(
+                request("https://example.com/", basis, now.plus(1, ChronoUnit.DAYS)), now
+            );
+            assertEquals(basis, value.authorizationBasis());
+        }
+    }
+
+    @Test
+    void rejectsAnInsufficientAuthorizationReference() {
+        Instant now = Instant.now();
+        WebTargetRequest shortReference = new WebTargetRequest(
+            "Target", "https://example.com/", "owner_or_developer", "short",
+            true, now.plus(1, ChronoUnit.DAYS), null, List.of("/"), null,
+            null, null, null, null, false
+        );
+        assertThrows(IllegalArgumentException.class,
+            () -> WebTargetValidation.normalize(shortReference, now));
+    }
+
+    @Test
     void allowsNonstandardPortOnlyWhenExplicitlyScopedAsLocalLab() {
         Instant now = Instant.now();
         WebTargetRequest request = new WebTargetRequest(
