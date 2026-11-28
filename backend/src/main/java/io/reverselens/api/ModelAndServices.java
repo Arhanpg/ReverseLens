@@ -36,16 +36,27 @@ record WorkerUpdate(String status, String toolVersion, Integer exitCode, Long du
 
 @Component
 class EngineCatalog {
-    private final Map<String, EngineDefinition> engines = Map.of(
-      "jadx", new EngineDefinition("jadx","JADX","1.5.7",List.of("apk"),"dex-to-source","DEX to Java-like source reconstruction.","integrated"),
-      "apktool", new EngineDefinition("apktool","Apktool","3.0.3",List.of("apk"),"resources-and-smali","Decode Android resources, manifest and Smali.","integrated"),
-      "androguard", new EngineDefinition("androguard","Androguard","4.1.4",List.of("apk"),"apk-metadata-and-dex","Programmatic APK/DEX metadata and class inspection.","integrated"),
-      "apkid", new EngineDefinition("apkid","APKiD","3.2.0",List.of("apk"),"packer-fingerprinting","Identify supported compilers, packers and protectors.","integrated"),
-      "bundletool", new EngineDefinition("bundletool","bundletool","1.18.3",List.of("aab","apks"),"app-bundle-inspection","Validate bundles and inspect split inventories.","integrated")
+    private final Map<String, EngineDefinition> engines = Map.ofEntries(
+      Map.entry("jadx", new EngineDefinition("jadx","JADX","1.5.7",List.of("apk"),"dex-to-source","DEX to Java-like source reconstruction.","integrated")),
+      Map.entry("apktool", new EngineDefinition("apktool","Apktool","3.0.3",List.of("apk"),"resources-and-smali","Decode Android resources, manifest and Smali.","integrated")),
+      Map.entry("androguard", new EngineDefinition("androguard","Androguard","4.1.4",List.of("apk"),"apk-metadata-and-dex","Programmatic APK/DEX metadata and class inspection.","integrated")),
+      Map.entry("apkid", new EngineDefinition("apkid","APKiD","3.2.0",List.of("apk"),"packer-fingerprinting","Identify supported compilers, packers and protectors.","integrated")),
+      Map.entry("bundletool", new EngineDefinition("bundletool","bundletool","1.18.3",List.of("aab","apks"),"app-bundle-inspection","Validate bundles and inspect split inventories.","integrated")),
+      Map.entry("apkeditor", new EngineDefinition("apkeditor","APKEditor","1.4.9",List.of("apk","apks"),"apk-resource-decoding","Decode APK resources and manifest XML; APKS analysis uses the selected base split.","integrated")),
+      Map.entry("apkleaks", new EngineDefinition("apkleaks","APKLeaks","2.6.3",List.of("apk","apks"),"uri-and-string-triage","Extract URI and secret-pattern candidates; findings require manual validation.","integrated")),
+      Map.entry("hermes-dec", new EngineDefinition("hermes-dec","Hermes Decompiler","0.1.8",List.of("apk","apks"),"hermes-bytecode","Disassemble and partially reconstruct a verified Hermes HBC bundle.","optional")),
+      Map.entry("blutter", new EngineDefinition("blutter","Blutter","pre-provisioned",List.of("apk","apks"),"flutter-aot","Analyze supported Android ARM64 Flutter libapp.so artifacts.","optional")),
+      Map.entry("ghidra", new EngineDefinition("ghidra","Ghidra","12.2",List.of("apk","apks"),"native-pseudocode-and-call-graph","Headless native ELF analysis, pseudocode and static call references.","optional")),
+      Map.entry("mobsf", new EngineDefinition("mobsf","MobSF","self-hosted",List.of("apk","apks"),"mobile-static-analysis","Submit to a configured private/self-hosted MobSF API.","optional")),
+      Map.entry("exodus-standalone", new EngineDefinition("exodus-standalone","Exodus Standalone","1.5.0",List.of("apk","apks"),"tracker-signature-matching","Local tracker-signature matching; not runtime tracking confirmation.","optional"))
     );
-    List<EngineDefinition> all() { return engines.values().stream().sorted(Comparator.comparing(EngineDefinition::engineId)).toList(); }
+    List<EngineDefinition> all() {
+      return engines.values().stream().sorted(Comparator.comparing(EngineDefinition::engineId)).toList();
+    }
     boolean exists(String id) { return engines.containsKey(id); }
-    boolean supports(String id,String format) { return Optional.ofNullable(engines.get(id)).map(e -> e.supportedFormats().contains(format)).orElse(false); }
+    boolean supports(String id,String format) {
+      return Optional.ofNullable(engines.get(id)).map(e -> e.supportedFormats().contains(format)).orElse(false);
+    }
     Set<String> defaults(String format) {
       return switch(format) {
         case "apk" -> Set.of("jadx","apktool","androguard","apkid");
@@ -53,7 +64,7 @@ class EngineCatalog {
         default -> Set.of();
       };
     }
-  }
+}
 
 @Service
 class WorkspaceService {
@@ -178,7 +189,7 @@ class RunService {
       List<String> jobs=new ArrayList<>();
       for(String engine:chosen){
         UUID execution=UUID.randomUUID();String out=relative+"/engines/"+engine;
-        jdbc.update("INSERT INTO engine_executions(id,run_id,engine_id,status,output_directory,adapter_version,created_at) VALUES(?,?,?,'queued',?,'0.1.0',?)",
+        jdbc.update("INSERT INTO engine_executions(id,run_id,engine_id,status,output_directory,adapter_version,created_at) VALUES(?,?,?,'queued',?,'0.2.0',?)",
           execution,runId,engine,out,Timestamp.from(now));
         Map<String,Object> payload=new LinkedHashMap<>();payload.put("runId",runId.toString());payload.put("targetId",targetId.toString());
         payload.put("executionId",execution.toString());payload.put("engineId",engine);payload.put("inputFormat",fmt);
@@ -191,7 +202,7 @@ class RunService {
       return new RunCreatedResponse(runId,targetId,"queued",chosen,now);
     }
     void update(UUID executionId,WorkerUpdate u){
-      if(!Set.of("running","succeeded","partial","failed","timed_out","cancelled").contains(u.status()))throw new IllegalArgumentException("Invalid execution state.");
+      if(!Set.of("running","succeeded","partial","failed","timed_out","cancelled","incompatible").contains(u.status()))throw new IllegalArgumentException("Invalid execution state.");
       int n;
       if("running".equals(u.status())) n=jdbc.update("UPDATE engine_executions SET status='running',tool_version=?,started_at=NOW() WHERE id=? AND status='queued'",u.toolVersion(),executionId);
       else n=jdbc.update("UPDATE engine_executions SET status=?,tool_version=COALESCE(?,tool_version),exit_code=?,duration_ms=?,output_bytes=?,error_summary=?,finished_at=NOW() WHERE id=? AND status IN ('queued','running')",

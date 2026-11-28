@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
-type Engine = { engineId: string; name: string; version: string; supportedFormats: string[]; description: string };
+type Engine = { engineId: string; name: string; version: string; supportedFormats: string[]; description: string; integrationStatus?: string };
 type Target = { id: string; displayName: string; originalFilename: string; sha256: string; sizeBytes: number; authorizationBasis: string; createdAt: string };
 type Execution = { id: string; engineId: string; status: string; toolVersion?: string; durationMs?: number; outputBytes?: number; errorSummary?: string };
 type Run = { id: string; targetId: string; status: string; inputSha256: string; createdAt: string; executions: Execution[] };
@@ -65,7 +65,7 @@ export default function Home() {
     finally{setBusy(false);}
   }
   return <main>
-    <header><div><div className="pill">Phase 1 · Android static MVP</div><h1>ReverseLens</h1><p>Run independent analyzers against artifacts you own or are authorized to assess.</p></div><div className="row"><a href="/web" className="muted">Web Lab</a><a href="/benchmarks" className="muted">Benchmark Lab</a><button type="button" onClick={()=>refresh().catch(e=>setError(e.message))}>Refresh</button></div></header>
+    <header><div><div className="pill">Phase 4 · Specialist Android and native analysis</div><h1>ReverseLens</h1><p>Run independent analyzers against artifacts you own or are authorized to assess.</p></div><div className="row"><a href="/web" className="muted">Web Lab</a><a href="/benchmarks" className="muted">Benchmark Lab</a><button type="button" onClick={()=>refresh().catch(e=>setError(e.message))}>Refresh</button></div></header>
     {message&&<p className="success">{message}</p>}{error&&<p className="error">{error}</p>}
     <div className="grid">
       <section className="panel stack">
@@ -89,10 +89,10 @@ export default function Home() {
           <div><h2>3. Select engines</h2><p className="muted">Leave all unchecked to use the default engine profile.</p></div>
           <div className="engines">{compatible.map(e=><label className="engine" key={e.engineId}>
             <input type="checkbox" checked={chosen.includes(e.engineId)} onChange={event=>setChosen(old=>event.target.checked?[...old,e.engineId]:old.filter(x=>x!==e.engineId))}/>
-            <span>{e.name}<br/><span className="muted">v{e.version}</span></span>
+            <span>{e.name}<br/><span className="muted">v{e.version} · {e.integrationStatus === "optional" ? "Optional tool setup required" : "Integrated"}</span></span>
           </label>)}</div>
           <button disabled={busy||!targetId} onClick={startRun}>Start independent analysis jobs</button>
-          <p className="notice">Static analysis only. AAB/APKS are handled by bundletool in this phase; web capture and dynamic analysis are later phases.</p>
+          <p className="notice">Static analysis only. Specialist engines are runtime-gated: Flutter requires ARM64 libapp.so, Hermes requires a verified HBC bundle, and Ghidra requires native ELF libraries. Optional tools need separate provisioning.</p>
         </div>
       </section>
       <section className="panel">

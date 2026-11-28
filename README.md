@@ -34,6 +34,10 @@ No engine integration is complete until it meets the Definition of Done in the d
 
 Phase 3 now includes database-backed web-target registration with explicit authorization basis/reference/expiry and exact scope, expiry-bounded Redis capture jobs, worker status/manifest callbacks, and a Next.js Web Lab. Its separate Playwright worker captures browser-visible evidence and emits initial route, dependency-candidate and network-observation graphs. The Compose worker is opt-in on the internal-only backend network for local lab services; public egress is intentionally disabled. Target revocation/cancellation, a production remote egress proxy/firewall, additional analyzers, safe HAR export and the ground-truth corpus remain open. See [implementation](docs/phase-3/IMPLEMENTATION.md), [security review](docs/phase-3/SECURITY.md), and [review checklist](docs/PHASE_3_CHECKLIST.md).
 
+## Phase 4 — Specialist Android/native milestone
+
+The Phase 4 branch adds APK runtime detection and specialist routing for Flutter ARM64, React Native Hermes and native ELF libraries. APKEditor and APKLeaks are added to the standard worker; Hermes Decompiler, Blutter, Ghidra, MobSF and Exodus are optional pre-provisioned adapters. Ghidra can export static function/call-reference graphs. Runtime-incompatible engines are stored as incompatible rather than failed and do not enter accuracy scoring. Optional tools have separate installation and license requirements. See [Phase 4 implementation](docs/phase-4/IMPLEMENTATION.md), [Phase 4 checklist](docs/PHASE_4_CHECKLIST.md), and [Phase 4 third-party notices](THIRD_PARTY_NOTICES_PHASE4.md).
+
 ## Workflow
 
 1. Create a project and register an authorized target or user-supplied artifact.

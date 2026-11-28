@@ -36,12 +36,20 @@ class BenchmarkService {
  private static final Set<String> GT_STATES=Set.of("unreviewed","reviewed","verified","disputed","not_applicable");
  private static final Set<String> CACHE_POLICIES=Set.of("cold_each_run","warm_each_run","mixed","not_controlled");
  private static final Set<String> TERMINAL=Set.of("succeeded","partial","failed","timed_out","cancelled","incompatible");
- private static final Map<String,Set<String>> CAPS=Map.of(
-  "jadx",Set.of("dex_to_source","cross_references"),
-  "apktool",Set.of("android_resources","manifest","smali"),
-  "androguard",Set.of("apk_parsing","dex_analysis","call_graph"),
-  "apkid",Set.of("packer_detection","compiler_detection","protector_detection"),
-  "bundletool",Set.of("aab_processing","split_apk_processing"));
+ private static final Map<String,Set<String>> CAPS=Map.ofEntries(
+  Map.entry("jadx",Set.of("dex_to_source","cross_references")),
+  Map.entry("apktool",Set.of("android_resources","manifest","smali")),
+  Map.entry("androguard",Set.of("apk_parsing","dex_analysis","call_graph")),
+  Map.entry("apkid",Set.of("packer_detection","compiler_detection","protector_detection")),
+  Map.entry("bundletool",Set.of("aab_processing","split_apk_processing")),
+  Map.entry("apkeditor",Set.of("android_resources","manifest","smali","apk_processing")),
+  Map.entry("apkleaks",Set.of("uri_extraction","string_pattern_triage")),
+  Map.entry("hermes-dec",Set.of("react_native","hermes_bytecode")),
+  Map.entry("blutter",Set.of("flutter_aot","dart_object_pool","arm64")),
+  Map.entry("ghidra",Set.of("elf_analysis","arm64_disassembly","native_pseudocode","native_call_graph")),
+  Map.entry("mobsf",Set.of("mobile_static_analysis")),
+  Map.entry("exodus-standalone",Set.of("tracker_signature_matching"))
+ );
  private final JdbcTemplate jdbc;
  private final ObjectMapper mapper;
  private final EngineCatalog engines;

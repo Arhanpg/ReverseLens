@@ -10,6 +10,10 @@ class BenchmarkServiceTest {
     assertThat(BenchmarkService.capabilitiesFor("apktool")).contains("manifest");
     assertThat(BenchmarkService.capabilitiesFor("apkid")).contains("packer_detection");
     assertThat(BenchmarkService.capabilitiesFor("jadx")).doesNotContain("packer_detection");
+    assertThat(BenchmarkService.capabilitiesFor("blutter")).contains("flutter_aot", "dart_object_pool");
+    assertThat(BenchmarkService.capabilitiesFor("hermes-dec")).contains("hermes_bytecode");
+    assertThat(BenchmarkService.capabilitiesFor("ghidra")).contains("native_call_graph");
+    assertThat(BenchmarkService.capabilitiesFor("ghidra")).doesNotContain("dex_to_source");
   }
 
   @Test void onlyScoresObservationsInCapabilityClassesWithVerifiedLabels() {

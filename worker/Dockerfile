@@ -21,6 +21,8 @@ RUN curl -fsSL "https://github.com/iBotPeaches/Apktool/releases/download/v${APKT
 
 ARG BUNDLETOOL_VERSION=1.18.3
 ARG BUNDLETOOL_SHA256=a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29
+ARG APKEDITOR_VERSION=1.4.9
+ARG APKEDITOR_SHA256=a9cd40df818845456be6d696de6110c89edf4b0a0580cb83438ed6b25a366e67
 RUN curl -fsSL "https://github.com/google/bundletool/releases/download/${BUNDLETOOL_VERSION}/bundletool-all-${BUNDLETOOL_VERSION}.jar" -o /opt/bundletool.jar && \
     echo "${BUNDLETOOL_SHA256}  /opt/bundletool.jar" | sha256sum -c -
 RUN jadx --help >/dev/null && apktool --version >/dev/null && apkid --help >/dev/null && \
