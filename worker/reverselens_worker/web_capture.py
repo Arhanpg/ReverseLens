@@ -9,6 +9,7 @@ from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from .security import inventory_files
 from .web_scope import ScopeViolation, WebScope, validate_url
+from .graph_builder import build_graphs
 
 SECRET_HEADERS = {"authorization", "proxy-authorization", "cookie", "set-cookie", "x-api-key"}
 SECRET_PATTERN = re.compile(
@@ -63,11 +64,12 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
         / ("run-" + str(job.get("runId", "run")))
     ).resolve()
     engine = root / "engines" / "playwright"
-    for name in ("dom", "screenshots", "responses", "logs", "metadata"):
+    for name in ("dom", "screenshots", "responses", "logs", "metadata", "graphs"):
         (engine / name).mkdir(parents=True, exist_ok=True)
 
     request_records: list[dict] = []
     response_records: list[dict] = []
+    page_records: list[dict] = []
     console_records: list[dict] = []
     warnings: list[str] = []
     pages_captured = 0
@@ -121,9 +123,14 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
                 if request.resource_type in {"media", "font"}:
                     route.abort()
                     return
+                try:
+                    page_url = safe_url_for_evidence(request.frame.url) if request.frame.url else None
+                except Exception:
+                    page_url = None
                 request_records.append(
                     {
                         "url": safe_url_for_evidence(checked),
+                        "page_url": page_url,
                         "method": request.method,
                         "resource_type": request.resource_type,
                         "headers": safe_headers(request.headers),
@@ -149,8 +156,13 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
                     if content_length_value and content_length_value.isdecimal()
                     else None
                 )
+                try:
+                    page_url = safe_url_for_evidence(response.request.frame.url) if response.request.frame.url else None
+                except Exception:
+                    page_url = None
                 record = {
                     "url": safe_url_for_evidence(url),
+                    "page_url": page_url,
                     "status": response.status,
                     "content_type": content_type,
                     "headers": safe_headers(response.headers),
@@ -234,26 +246,32 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
                             animations="disabled",
                             timeout=max(1, min(10_000, int(max(0.1, remaining_seconds()) * 1000))),
                         )
+                    links = page.locator("a[href]").evaluate_all(
+                        "(elements) => elements.map((element) => element.href).slice(0, 500)"
+                    )
+                    safe_links = []
+                    for link in links:
+                        try:
+                            candidate = validate_url(urljoin(url, link), scope)
+                            evidence_url = safe_url_for_evidence(candidate)
+                            if evidence_url not in safe_links:
+                                safe_links.append(evidence_url)
+                            if candidate not in seen and len(queue) + pages_captured < scope.max_pages:
+                                queue.append(candidate)
+                        except ScopeViolation:
+                            pass
                     page_record = {
                         "url": safe_url_for_evidence(url),
                         "title": title,
                         "status": response.status if response else None,
                         "dom_file": dom_file,
                         "screenshot_file": screenshot_file,
+                        "links": safe_links,
                     }
+                    page_records.append(page_record)
                     (engine / "metadata" / (key + ".json")).write_text(
                         json.dumps(page_record, indent=2), encoding="utf-8"
                     )
-                    links = page.locator("a[href]").evaluate_all(
-                        "(elements) => elements.map((element) => element.href).slice(0, 500)"
-                    )
-                    for link in links:
-                        try:
-                            candidate = validate_url(urljoin(url, link), scope)
-                            if candidate not in seen and len(queue) + pages_captured < scope.max_pages:
-                                queue.append(candidate)
-                        except ScopeViolation:
-                            pass
                 except Exception as exc:
                     warnings.append(
                         f"page capture failed for {safe_url_for_evidence(url)}: {type(exc).__name__}: {exc}"[:1000]
@@ -261,6 +279,12 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
         finally:
             context.close()
             browser.close()
+
+    graph_data = build_graphs(engine, page_records, request_records, response_records)
+    for graph_name, graph in graph_data.items():
+        (engine / "graphs" / (graph_name + ".json")).write_text(
+            json.dumps(graph, indent=2), encoding="utf-8"
+        )
 
     for name, records in (
         ("console.json", console_records),
@@ -279,6 +303,7 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
         "requests_attempted": request_attempts,
         "requests_observed": len(request_records),
         "responses_observed": len(response_records),
+        "graphs_created": sorted(graph_data.keys()),
         "javascript_asset_bytes_saved": saved_asset_bytes,
         "duration_ms": duration,
         "authorization_scope": {
@@ -302,7 +327,7 @@ def capture_web(job: dict, workspace_root: Path) -> dict:
         "warnings": warnings,
     }
     (engine / "engine-manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    inventory = inventory_files(engine)
+    inventory = [item for item in inventory_files(engine) if item["path"] != "engine-manifest.json"]
     manifest["files"] = inventory
     (engine / "engine-manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return {

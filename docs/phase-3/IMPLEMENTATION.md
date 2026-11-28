@@ -16,13 +16,14 @@ The first Phase 3 milestone adds an isolated, bounded Playwright capture worker.
 - DOM snapshots, screenshots, console/page errors, redacted request/response metadata and bounded JavaScript assets.
 - Query strings are stripped from persisted URLs; sensitive headers and common token patterns are redacted.
 - Per-run Playwright output directory with SHA-256 file inventory.
+- Evidence-linked route, dependency-candidate and network-observation graphs; self-referential manifest hashing is excluded.
 - Separate web-worker image; Android analyzer image remains unchanged.
 
 ## Security boundary and residual risk
 
 Application DNS checks are defense-in-depth, not an egress firewall. Production must place the browser worker behind a network policy that blocks loopback, private, link-local, multicast, reserved and cloud metadata destinations. DNS rebinding remains possible if the container network permits arbitrary egress.
 
-The saved JavaScript byte limit bounds persisted assets, not all bytes transferred by Chromium. A network egress proxy or firewall with response limits is required for a hard total-transfer boundary. Unknown/chunked JavaScript response lengths are not persisted. This worker must not be deployed with unrestricted network egress.
+Graph output includes observed in-scope anchor links, page-to-script asset relationships, heuristic client-library signature candidates, and request/response endpoint observations. Library detections are explicitly unverified candidates, not an SBOM or vulnerability assessment.\n\nThe saved JavaScript byte limit bounds persisted assets, not all bytes transferred by Chromium. A network egress proxy or firewall with response limits is required for a hard total-transfer boundary. Unknown/chunked JavaScript response lengths are not persisted. This worker must not be deployed with unrestricted network egress.
 
 HAR export is intentionally omitted in this first slice because raw HAR can preserve authorization headers and cookies. Structured, redacted request/response metadata is retained instead. Raw DOM remains sensitive evidence and must not be served as executable same-origin content.
 
@@ -43,7 +44,7 @@ The worker listens to Redis list `reverselens:web:capture`. Jobs contain `url`, 
 - Network-layer egress firewall and hard total-transfer limits.
 - Safe opt-in HAR export.
 - Web-Check, Wappalyzergo, Webcrack, Wakaru, Oxc, Retire.js and Lighthouse adapters.
-- Route/dependency/network graph extraction.
+- Graphs are limited to observed anchors, browser request events and heuristic client-library signatures; they are not a full application architecture model.
 - Juice Shop/RealWorld and source-known web benchmark datasets.
 - End-to-end local web app acceptance test under the restricted container network.
 

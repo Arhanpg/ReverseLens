@@ -10,7 +10,7 @@
 - [x] Request/page/response-byte/wall-clock budgets.
 - [x] Fresh unauthenticated browser context.
 - [x] DOM, screenshots, console/page errors, redacted request/response metadata and bounded JS assets.
-- [x] Per-run Playwright workspace and SHA-256 inventory.
+- [x] Per-run Playwright workspace and SHA-256 inventory (excluding the manifest's self-hash).
 - [x] Scope and redaction unit tests.
 - [x] Implementation/security documentation.
 
@@ -22,7 +22,7 @@
 - [ ] Web-Check and Wappalyzergo adapters.
 - [ ] Webcrack, Wakaru and Oxc adapters with pinned runtimes and fixtures.
 - [ ] Retire.js and Lighthouse adapters against local fixtures.
-- [ ] Evidence-backed route/dependency/network graphs.
+- [x] Evidence-backed route/dependency/network graph extraction from browser observations (heuristic library matches remain unverified).
 - [ ] Source-known Juice Shop and RealWorld benchmark fixtures with hashes/licenses.
 - [ ] End-to-end authorized local web app test in an isolated Compose lab.
 - [ ] Expanded redirect/DNS rebinding/cancellation/quota threat tests.
