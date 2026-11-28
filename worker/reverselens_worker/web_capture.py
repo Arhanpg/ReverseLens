@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
@@ -38,14 +39,37 @@ def safe_url_for_evidence(value: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
 
 
+def apply_authorization_expiry(scope_values: dict, expiry_value: str, now: datetime | None = None) -> dict:
+    """Clamp a job's browser duration to a timezone-aware authorization expiry."""
+    if not expiry_value:
+        raise RuntimeError("Capture job is missing its authorization expiry.")
+    try:
+        expiry = datetime.fromisoformat(str(expiry_value).replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise RuntimeError("Capture job has an invalid authorization expiry.") from exc
+    if expiry.tzinfo is None:
+        raise RuntimeError("Authorization expiry must include a timezone.")
+    current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        raise ValueError("Current time must include a timezone.")
+    remaining_seconds = int((expiry - current).total_seconds())
+    if remaining_seconds <= 0:
+        raise RuntimeError("Authorization expired before browser capture started.")
+    values = dict(scope_values or {})
+    values["max_duration_seconds"] = min(
+        int(values.get("max_duration_seconds", 120)), remaining_seconds
+    )
+    return values
+
+
 def capture_web(job: dict, workspace_root: Path) -> dict:
     """Bounded passive Playwright capture for a URL with an explicit authorization scope."""
+    values = apply_authorization_expiry(job.get("scope") or {}, job.get("authorizationExpiresAt"))
     try:
         from playwright.sync_api import sync_playwright
     except ImportError as exc:
         raise RuntimeError("Playwright is not installed; install worker/requirements-web.txt") from exc
 
-    values = job.get("scope") or {}
     scope = WebScope(
         allowed_hosts=tuple(values.get("allowed_hosts", ())),
         allowed_path_prefixes=tuple(values.get("allowed_path_prefixes", ("/",))),

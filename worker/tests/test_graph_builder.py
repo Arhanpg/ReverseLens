@@ -53,7 +53,7 @@ def test_graphs_preserve_route_request_and_dependency_evidence(tmp_path):
     network = graphs["network-graph"]
 
     assert any(edge["to"] == "https://example.test/about" for edge in route["edges"])
-    assert any(node["name"] == "react" and node["validation_status"] == "candidate_unverified"
+    assert any(node.get("name") == "react" and node.get("validation_status") == "candidate_unverified"
                for node in deps["nodes"])
     assert any(edge["kind"] == "loads_script_asset" for edge in deps["edges"])
     assert any(node["kind"] == "endpoint" for node in network["nodes"])

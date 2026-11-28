@@ -13,9 +13,15 @@
 | Cross-run evidence mixing | Per-target/run/engine workspace |
 | Misleading reconstruction claim | Manifest states browser-visible limitations and that server code is not recovered |
 
+## Authorization record and worker queue
+
+The control plane requires explicit confirmation, an authorization basis/reference, a future expiry (no more than 30 days out), exact host allowlist, path prefixes, ports and bounded limits. Jobs inherit persisted scope and are clamped to expiry; the browser worker rejects expired jobs before navigation. Worker callbacks use the existing shared worker token. This is a local single-user application model, not multi-tenant identity/authorization.
+
+The Compose browser worker is opt-in (`--profile web-capture`) and runs on the internal-only backend network. It is intended for local fixture services attached to that network; it cannot reach public websites. Do not attach it to a public network or add public egress without a separate proxy/firewall policy and tests.
+
 ## Deployment requirements
 
-Do not attach the browser worker to a network with unrestricted egress. Enforce private/reserved/loopback/link-local/multicast and metadata-service blocking at the network layer. The Python DNS check is defense-in-depth; Chromium can cache DNS and may resolve independently. A network-layer policy must also enforce any required total response-byte cap.
+Do not attach the browser worker to a network with unrestricted egress. Enforce private/reserved/loopback/link-local/multicast and metadata-service blocking at the network layer. The Python DNS check is defense-in-depth; Chromium can cache DNS and may resolve independently. The current internal-only Compose profile does not include public egress; remote capture is not enabled by this PR. A network-layer policy must also enforce any required total response-byte cap.
 
 Do not mount the Docker socket, host home directory, browser profiles, SSH material, cloud credentials or unrelated workspaces. Use non-root execution, read-only filesystem, bounded tmpfs and CPU/memory/PID/disk quotas.
 

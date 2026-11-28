@@ -12,6 +12,10 @@ The first Phase 3 milestone adds an isolated, bounded Playwright capture worker.
 - Browser request interception revalidates requests and redirects.
 - Passive capture permits GET/HEAD only and blocks state-changing requests.
 - Fresh unauthenticated browser context; no cookie import or personal profile.
+- Spring API endpoints register web targets and queue capture runs only from stored authorization records; capture duration is clamped to the recorded authorization expiry.
+- Worker callbacks persist running/completed/failed state and capture manifests through the existing worker-token gate.
+- Docker Compose exposes the worker behind an opt-in `web-capture` profile on the internal-only backend network; no public egress is granted.
+- Frontend Web Lab for target registration, scope declaration, expiry, capture queueing and history.
 - Request/page/saved-JavaScript-byte/wall-clock budgets.
 - DOM snapshots, screenshots, console/page errors, redacted request/response metadata and bounded JavaScript assets.
 - Query strings are stripped from persisted URLs; sensitive headers and common token patterns are redacted.
@@ -35,13 +39,13 @@ python -m playwright install chromium
 PYTHONPATH=worker python -m reverselens_worker.web_worker
 ```
 
-The worker listens to Redis list `reverselens:web:capture`. Jobs contain `url`, `targetId`, `runId` and an explicit `scope` including `allowed_hosts`, `allowed_path_prefixes` and `allowed_ports`. Output is written under `WORKSPACE_ROOT/web/<targetId>/run-<runId>/engines/playwright`.
+The Spring API stores a web target's authorization basis/reference/expiry and exact host/path/port scope. `POST /api/v1/web-targets` registers a target; `POST /api/v1/web-targets/{id}/captures` queues a bounded job; `GET /api/v1/web-targets/{id}/captures` returns history. The worker listens to Redis list `reverselens:web:capture`, rechecks expiry, and reports state via `PUT /internal/v1/web-captures/{id}`. Output is written under `WORKSPACE_ROOT/web/<targetId>/run-<runId>/engines/playwright`.
 
 ## Not yet wired or implemented
 
-- Spring API/database persistence for web authorization records and web target registration.
-- API job creation, queueing, cancellation and authorization-expiry enforcement.
-- Network-layer egress firewall and hard total-transfer limits.
+- Target disable/revoke controls, run cancellation and authorization revocation during an active browser job.
+- The API enforces expiry before queueing; the worker rechecks expiry before navigation. Revoke/cancel controls remain open.
+- Production network-layer egress firewall and hard total-transfer limits for remote targets.
 - Safe opt-in HAR export.
 - Web-Check, Wappalyzergo, Webcrack, Wakaru, Oxc, Retire.js and Lighthouse adapters.
 - Graphs are limited to observed anchors, browser request events and heuristic client-library signatures; they are not a full application architecture model.
