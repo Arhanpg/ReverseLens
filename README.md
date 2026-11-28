@@ -22,13 +22,17 @@ ReverseLens is not another wrapper around one decompiler. It is a multi-engine w
 
 **Phase 0 and Phase 1 are merged into `main`.** Phase 1 includes the Spring Boot API, PostgreSQL/Flyway, Redis queue, isolated Python worker, independent JADX/Apktool/Androguard/APKiD jobs, bundletool AAB/APKS handling, SHA-256 artifact storage and the starter Next.js dashboard. The Phase 1 implementation and testing docs are [here](docs/phase-1/IMPLEMENTATION.md).
 
-**Phase 2 — Benchmark engine and Android evidence reports — is implemented on `feature/phase-2-benchmark-engine` and under PR review.** It adds dataset/profile/ground-truth management, repeated independent engine experiments, capability-aware scoring, hashed normalized evidence, host/resource provenance, unique/shared recovery comparison, and JSON/Markdown/HTML reports. Open the [Phase 2 implementation](docs/phase-2/IMPLEMENTATION.md), [API guide](docs/phase-2/API.md), [testing guide](docs/phase-2/TESTING.md) and [review checklist](docs/PHASE_2_CHECKLIST.md).
+**Phase 2 — Benchmark engine and Android evidence reports — is merged into `main`.** It adds dataset/profile/ground-truth management, repeated independent engine experiments, capability-aware scoring, hashed normalized evidence, host/resource provenance, unique/shared recovery comparison, and JSON/Markdown/HTML reports. Open the [Phase 2 implementation](docs/phase-2/IMPLEMENTATION.md), [API guide](docs/phase-2/API.md), [testing guide](docs/phase-2/TESTING.md) and [review checklist](docs/PHASE_2_CHECKLIST.md).
 
 The Phase 1 real APK integration run and Phase 2 representative benchmark run remain manual maintainer acceptance items. CI validates code/build/tests and the pinned worker image; it does not claim those local acceptance runs.
 
 See [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md), [benchmark methodology](docs/benchmark-methodology/README.md), [third-party notices](THIRD_PARTY_NOTICES_PHASE1.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md), [Phase 0 checklist](docs/PHASE_0_CHECKLIST.md), [Phase 1 checklist](docs/PHASE_1_CHECKLIST.md), [Phase 2 checklist](docs/PHASE_2_CHECKLIST.md), [architecture overview](docs/architecture/OVERVIEW.md), [authorization policy](docs/legal-and-authorization/POLICY.md), [threat model](docs/threat-model/THREAT_MODEL.md), and [engine registry](engines/registry.yaml).
 
 No engine integration is complete until it meets the Definition of Done in the development plan.
+
+## Phase 3 — Web capture milestone
+
+Phase 3 now includes database-backed web-target registration with explicit authorization basis/reference/expiry and exact scope, expiry-bounded Redis capture jobs, worker status/manifest callbacks, and a Next.js Web Lab. Its separate Playwright worker captures browser-visible evidence and emits initial route, dependency-candidate and network-observation graphs. The Compose worker is opt-in on the internal-only backend network for local lab services; public egress is intentionally disabled. Target revocation/cancellation, a production remote egress proxy/firewall, additional analyzers, safe HAR export and the ground-truth corpus remain open. See [implementation](docs/phase-3/IMPLEMENTATION.md), [security review](docs/phase-3/SECURITY.md), and [review checklist](docs/PHASE_3_CHECKLIST.md).
 
 ## Workflow
 

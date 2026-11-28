@@ -1,0 +1,3 @@
+# Phase 3 milestone
+
+Phase 3 currently delivers web-target registration with stored authorization scope/expiry, expiry-bounded Redis captures, status callbacks, a Next.js Web Lab, a separate Playwright worker on the internal-only Compose network, and initial evidence-linked route/dependency-candidate/network graphs. It is not the full Phase 3 exit: target revocation/cancellation, production remote egress enforcement, the additional analyzer adapters, safe HAR, and benchmark corpus remain open. Read [implementation](IMPLEMENTATION.md), [security notes](SECURITY.md), and the [checklist](../PHASE_3_CHECKLIST.md).
