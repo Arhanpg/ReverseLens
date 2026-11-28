@@ -1,6 +1,6 @@
-# Phase 2 review checklist
+# Phase 2 completion record
 
-Phase 2 is implemented on `feature/phase-2-benchmark-engine`. Merge after reviewing CI and the integrated manual acceptance item.
+Phase 2 was merged into `main` via PR #7 on 2026-11-24. All five Phase 2 CI jobs passed on the reviewed feature-branch head. The real authorized APK benchmark remains a maintainer-side manual acceptance item.
 
 ## Delivered scope
 
@@ -22,7 +22,7 @@ Phase 2 is implemented on `feature/phase-2-benchmark-engine`. Merge after review
 
 ## Review before merge
 
-- [ ] All Phase 2 CI jobs pass on the PR head.
+- [x] All five Phase 2 CI jobs passed on the reviewed PR head.
 - [ ] Complete integrated run with a representative authorized APK on maintainer hardware.
 - [ ] Review APKiD dual-license obligations before distributing worker images.
 - [ ] Review dataset redistribution/licensing per target before publishing benchmark data.
@@ -30,7 +30,7 @@ Phase 2 is implemented on `feature/phase-2-benchmark-engine`. Merge after review
 
 ## Deliberate limitations
 
-- Web benchmarking is Phase 3.
+- Web benchmarking is implemented incrementally in Phase 3; see [Phase 3 checklist](PHASE_3_CHECKLIST.md).
 - Dynamic/runtime, Flutter/Hermes/Ghidra specialists are later phases.
 - Concurrency is fixed at 1; OS-level cold/warm cache control is not implemented.
 - Normalizers provide deterministic baseline observations, not complete semantic/source-line equivalence.

@@ -1,0 +1,45 @@
+name: Phase 3 web reconstruction validation
+on:
+  push:
+    branches: [feature/phase-3-web-reconstruction-v1]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/validate_phase0.py
+      - run: python -m pytest tests -q
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - run: mvn -B -f backend/pom.xml verify
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r worker/requirements.txt -r requirements-dev.txt
+      - run: python -m pip install pytest
+      - run: PYTHONPATH=worker python -m pytest worker/tests -q
+  web-worker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f worker/Dockerfile.web -t reverselens-web-worker:phase3 ./worker

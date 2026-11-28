@@ -1,7 +1,7 @@
 # ReverseLens — Master Development Plan
 
-> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.2 | Updated: 2026-11-24
-> Status: Phase 0 and Phase 1 on main; Phase 2 Android benchmark engine implemented on review branch | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
+> Project: ReverseLens | Owner: Arhanpg | Plan version: 1.3 | Updated: 2026-11-28
+> Status: Phases 0–2 merged into main; Phase 3 web-capture foundation on review branch | Type: Open-source, local-first, multi-engine Android and web reverse-engineering workbench
 
 ## Phase 0 implementation status
 
@@ -371,8 +371,8 @@ Limitations: APKS split-aware fan-out is not complete; Androguard produces metad
 See [Phase 1 implementation](docs/phase-1/IMPLEMENTATION.md), [API guide](docs/phase-1/API.md), [testing guide](docs/phase-1/TESTING.md) and [review checklist](docs/PHASE_1_CHECKLIST.md).
 
 ### Phase 2 — Benchmark engine and Android report quality
-**Implementation branch:** `feature/phase-2-benchmark-engine`  
-**Status:** Implemented for review; CI and authorized APK end-to-end manual acceptance are the final review gates.
+**Implementation:** merged into `main` via PR #7 on 2026-11-24.  
+**Status:** Phase 2 CI passed; representative authorized APK benchmarking remains a maintainer-side manual acceptance item.
 
 Delivered in Phase 2 v1:
 - PostgreSQL/Flyway datasets, target membership, profiles, ground-truth, experiments, attempts, normalized observations and results.
@@ -398,6 +398,8 @@ See [Phase 2 implementation](docs/phase-2/IMPLEMENTATION.md), [API guide](docs/p
 
 ### Phase 3 — Web capture and JavaScript reconstruction
 **Estimate:** 3 weeks / 45–60 hours
+
+**Current milestone:** bounded Playwright capture worker implemented on `feature/phase-3-web-reconstruction-v1`; see [Phase 3 checklist](docs/PHASE_3_CHECKLIST.md). This is a first implementation slice, not completion of the full Phase 3 exit criteria.
 
 Deliverables: authorization/scope gate; allowlist and SSRF safeguards; bounded Playwright capture of DOM, console, screenshots, HAR and JS assets; Web-Check and Wappalyzergo; Webcrack and Wakaru; Oxc structural extraction; Retire.js and Lighthouse; independent output folders; route/dependency/network graphs; local Juice Shop and RealWorld benchmark corpus.
 
