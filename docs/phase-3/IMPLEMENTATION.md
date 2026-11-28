@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-The first Phase 3 milestone adds an isolated, bounded Playwright capture worker. It is an executable worker capability, not yet a complete control-plane product flow.
+The current Phase 3 milestone combines an authorization-backed web-target control plane and Web Lab UI with an isolated, bounded Playwright capture worker. It is a partial product flow; revocation/cancellation, remote egress security and the remaining analyzers are still open.
 
 ## Included
 
@@ -34,12 +34,10 @@ HAR export is intentionally omitted in this first slice because raw HAR can pres
 ## Run locally
 
 ```bash
-python -m pip install -r worker/requirements.txt -r worker/requirements-web.txt
-python -m playwright install chromium
-PYTHONPATH=worker python -m reverselens_worker.web_worker
+docker compose --profile web-capture up -d web-capture-worker
 ```
 
-The Spring API stores a web target's authorization basis/reference/expiry and exact host/path/port scope. `POST /api/v1/web-targets` registers a target; `POST /api/v1/web-targets/{id}/captures` queues a bounded job; `GET /api/v1/web-targets/{id}/captures` returns history. The worker listens to Redis list `reverselens:web:capture`, rechecks expiry, and reports state via `PUT /internal/v1/web-captures/{id}`. Output is written under `WORKSPACE_ROOT/web/<targetId>/run-<runId>/engines/playwright`.
+The Spring API stores a web target's authorization basis/reference/expiry and exact host/path/port scope. `POST /api/v1/web-targets` registers a target; `POST /api/v1/web-targets/{id}/captures` queues a bounded job; `GET /api/v1/web-targets/{id}/captures` returns history. The worker listens to Redis list `reverselens:web:capture`, rechecks expiry, and reports state via `PUT /internal/v1/web-captures/{id}`. Output is written under `WORKSPACE_ROOT/web/<targetId>/run-<runId>/engines/playwright`. The Compose worker runs only on the internal backend network, so it is for local lab services attached to that network; it does not have public Internet egress.
 
 ## Not yet wired or implemented
 

@@ -7,7 +7,7 @@
 - [x] DNS validation across all returned IPv4/IPv6 addresses.
 - [x] Reject private, loopback, link-local, reserved, multicast and metadata destinations (except explicit local-lab loopback).
 - [x] Browser request interception revalidates navigations and redirects.
-- [x] Request/page/response-byte/wall-clock budgets.
+- [x] Request/page/saved-JavaScript-byte/wall-clock budgets (the JS byte limit is not a total network-transfer cap).
 - [x] Fresh unauthenticated browser context.
 - [x] DOM, screenshots, console/page errors, redacted request/response metadata and bounded JS assets.
 - [x] Per-run Playwright workspace and SHA-256 inventory (excluding the manifest's self-hash).

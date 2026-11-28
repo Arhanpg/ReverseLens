@@ -399,7 +399,7 @@ See [Phase 2 implementation](docs/phase-2/IMPLEMENTATION.md), [API guide](docs/p
 ### Phase 3 — Web capture and JavaScript reconstruction
 **Estimate:** 3 weeks / 45–60 hours
 
-**Current milestone:** bounded Playwright capture worker implemented on `feature/phase-3-web-reconstruction-v1`; see [Phase 3 checklist](docs/PHASE_3_CHECKLIST.md). This is a first implementation slice, not completion of the full Phase 3 exit criteria.
+**Current milestone:** `feature/phase-3-web-reconstruction-v1` adds stored web-target authorization and scope, expiry-bounded API/Redis jobs, worker status callbacks, an opt-in internal-network Playwright worker, a Next.js Web Lab, and initial evidence-linked route/dependency/network graphs; see [Phase 3 checklist](docs/PHASE_3_CHECKLIST.md). It is a partial Phase 3 delivery, not completion of the full Phase 3 exit criteria.
 
 Deliverables: authorization/scope gate; allowlist and SSRF safeguards; bounded Playwright capture of DOM, console, screenshots, HAR and JS assets; Web-Check and Wappalyzergo; Webcrack and Wakaru; Oxc structural extraction; Retire.js and Lighthouse; independent output folders; route/dependency/network graphs; local Juice Shop and RealWorld benchmark corpus.
 

@@ -32,7 +32,7 @@ No engine integration is complete until it meets the Definition of Done in the d
 
 ## Phase 3 — Web capture milestone
 
-The first Phase 3 milestone adds an authorization-scoped Playwright capture worker. See [implementation](docs/phase-3/IMPLEMENTATION.md), [security review](docs/phase-3/SECURITY.md), and [review checklist](docs/PHASE_3_CHECKLIST.md). The browser worker emits evidence-linked route, dependency-candidate and network-observation graphs. API/database authorization persistence, the production network egress firewall, additional web analyzers and the ground-truth app corpus remain explicitly deferred.
+Phase 3 now includes database-backed web-target registration with explicit authorization basis/reference/expiry and exact scope, expiry-bounded Redis capture jobs, worker status/manifest callbacks, and a Next.js Web Lab. Its separate Playwright worker captures browser-visible evidence and emits initial route, dependency-candidate and network-observation graphs. The Compose worker is opt-in on the internal-only backend network for local lab services; public egress is intentionally disabled. Target revocation/cancellation, a production remote egress proxy/firewall, additional analyzers, safe HAR export and the ground-truth corpus remain open. See [implementation](docs/phase-3/IMPLEMENTATION.md), [security review](docs/phase-3/SECURITY.md), and [review checklist](docs/PHASE_3_CHECKLIST.md).
 
 ## Workflow
 

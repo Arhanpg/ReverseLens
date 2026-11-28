@@ -39,5 +39,6 @@ Raw captured HTML is untrusted and must not be served as executable same-origin 
 
 - The saved-JavaScript byte cap is not a total network-transfer cap.
 - DNS rebinding is not fully defeated by application checks alone.
-- The browser worker is not yet wired into the API/database authorization lifecycle.
-- No additional web analyzers, graph extraction or ground-truth benchmark corpus are claimed as complete.
+- Target revocation, active-job cancellation and authorization changes during an active browser job are not yet implemented.
+- Initial route/dependency-candidate/network graphs are emitted, but full app architecture extraction and independent dependency validation are incomplete.
+- No additional web analyzer adapters or ground-truth benchmark corpus are claimed as complete.
