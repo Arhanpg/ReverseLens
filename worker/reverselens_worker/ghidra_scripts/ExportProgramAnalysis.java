@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ExportProgramAnalysis extends ghidra.app.script.GhidraScript {
-    private static final int MAX_FUNCTIONS = 5000;
-    private static final int MAX_CALL_EDGES = 50000;
-    private static final int MAX_PSEUDOCODE_CHARS = 30000;
+    private static final int MAX_FUNCTIONS = 3000;
+    private static final int MAX_CALL_EDGES = 20000;
+    private static final int MAX_PSEUDOCODE_CHARS = 12000;
 
     private String escape(String value) {
         if (value == null) return "";
@@ -61,7 +61,7 @@ public class ExportProgramAnalysis extends ghidra.app.script.GhidraScript {
             String name = function.getName();
             String entry = function.getEntryPoint().toString();
             String pseudocode = "";
-            if (functionCount < 1500) {
+            if (functionCount < 750) {
                 DecompileResults result = decompiler.decompileFunction(function, 30, monitor);
                 if (result != null && result.decompileCompleted() && result.getDecompiledFunction() != null) {
                     pseudocode = result.getDecompiledFunction().getC();
@@ -107,9 +107,9 @@ public class ExportProgramAnalysis extends ghidra.app.script.GhidraScript {
             + "\"call_edges\":[" + callsJson + "],"
             + "\"limits\":{\"max_functions\":" + MAX_FUNCTIONS
             + ",\"max_call_edges\":" + MAX_CALL_EDGES
-            + ",\"decompiled_functions\":1500},"
+            + ",\"decompiled_functions\":750},"
             + "\"limitations\":[\"Static disassembler references are not proof of runtime execution.\","
-            + "\"Only the first 1,500 functions are decompiled to pseudocode.\","
+            + "\"Only the first 750 functions are decompiled to pseudocode.\","
             + "\"Function and call export is capped to protect worker resources.\"]"
             + "}";
         Files.writeString(output.toPath(), json, StandardCharsets.UTF_8);

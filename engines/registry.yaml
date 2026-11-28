@@ -168,10 +168,10 @@ engines:
     notes: "Optional Ghidra 12.2 headless adapter. Distribution is externally provisioned; functions and call edges are static analysis, not runtime traces."
   - engine_id: apkeditor
     name: APKEditor
-    description: APK processing and editing utility for supported Android package formats.
+    description: APK resource and manifest decoding, including supported split package processing.
     platforms: [android]
-    roles: [package_decoder]
-    capability_classes: [apk_processing, split_package_processing]
+    roles: [package_decoder, disassembler]
+    capability_classes: [apk_processing, android_resources, manifest, smali]
     repository_url: https://github.com/REAndroid/APKEditor
     documentation_url: https://github.com/REAndroid/APKEditor
     integration_status: integrated
@@ -180,16 +180,16 @@ engines:
     license_review_status: metadata_checked
     maintenance_status: active_signal
     last_repository_check: "2026-11-28"
-    supported_input_types: [apk, supported_split_archives]
-    expected_outputs: [processed_package, package_inventory]
+    supported_input_types: [apk, apks_base_split]
+    expected_outputs: [decoded_manifest, decoded_resources, smali]
     network_requirement: none
     isolation_profile: artifact_sandbox
     runtime_requirements: [Java runtime]
     resource_class: medium
     dependencies: []
     known_limitations:
-      - Supported archive formats must be validated with fixtures before claiming compatibility.
-    notes: "Bundled APKEditor 1.4.9 JAR is SHA-256 pinned in the standard worker image. Specialist adapter decodes APK resources/manifest; APKS currently uses the selected base split."
+      - APKS input analyzes only the selected base split; split-aware fan-out is not complete.
+    notes: "The standard worker image installs APKEditor 1.4.9 with a SHA-256-pinned upstream JAR."
   - engine_id: blutter
     name: Blutter
     description: Flutter AOT reverse-engineering helper for supported ARM64 application binaries.

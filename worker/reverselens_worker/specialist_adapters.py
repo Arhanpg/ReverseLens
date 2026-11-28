@@ -187,6 +187,14 @@ def run_mobsf(apk_path: Path, output_dir: Path) -> dict:
             or parsed.username or parsed.password or parsed.query or parsed.fragment):
         raise RuntimeError("MOBSF_URL must be a plain HTTP(S) private service URL without credentials.")
     host = parsed.hostname.lower()
+    allowed_hosts = {"mobsf", "localhost", "127.0.0.1", "::1"}
+    allowed_hosts.update(
+        value.strip().lower()
+        for value in os.getenv("MOBSF_ALLOWED_HOSTS", "").split(",")
+        if value.strip()
+    )
+    if host not in allowed_hosts:
+        raise RuntimeError("MobSF hostname is not listed in MOBSF_ALLOWED_HOSTS.")
     try:
         addresses = {
             ipaddress.ip_address(item[4][0].split("%", 1)[0])

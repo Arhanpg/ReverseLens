@@ -25,7 +25,10 @@ ARG APKEDITOR_VERSION=1.4.9
 ARG APKEDITOR_SHA256=a9cd40df818845456be6d696de6110c89edf4b0a0580cb83438ed6b25a366e67
 RUN curl -fsSL "https://github.com/google/bundletool/releases/download/${BUNDLETOOL_VERSION}/bundletool-all-${BUNDLETOOL_VERSION}.jar" -o /opt/bundletool.jar && \
     echo "${BUNDLETOOL_SHA256}  /opt/bundletool.jar" | sha256sum -c -
+RUN curl -fsSL "https://github.com/REAndroid/APKEditor/releases/download/V${APKEDITOR_VERSION}/APKEditor-${APKEDITOR_VERSION}.jar" -o /opt/APKEditor.jar && \
+    echo "${APKEDITOR_SHA256}  /opt/APKEditor.jar" | sha256sum -c -
 RUN jadx --help >/dev/null && apktool --version >/dev/null && apkid --help >/dev/null && \
+    java -jar /opt/APKEditor.jar -v >/dev/null && apkleaks --help >/dev/null && \
     python -c "from androguard.core.apk import APK; print('Androguard import OK')"
 
 RUN useradd --system --uid 10001 --create-home worker && mkdir -p /workspace /tmp/reverselens && \

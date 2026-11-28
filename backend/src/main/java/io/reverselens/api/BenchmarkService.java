@@ -340,7 +340,9 @@ class BenchmarkService {
   Map<String,Object> metrics=parseMap(metricsRaw);
   String toolVersion=jdbc.query("SELECT tool_version FROM engine_executions WHERE id=?",rs->rs.next()?rs.getString(1):null,executionId);
   String adapterVersion=jdbc.query("SELECT adapter_version FROM engine_executions WHERE id=?",rs->rs.next()?rs.getString(1):null,executionId);
-  String note=!scoringEligible?"Accuracy metrics are unavailable because this engine attempt did not complete successfully.":
+  String note="incompatible".equals(a.get("executionStatus"))
+   ?"Accuracy metrics are not applicable because this engine is incompatible with the target runtime.":
+   !scoringEligible?"Accuracy metrics are unavailable because this engine attempt did not complete successfully.":
    hasGt?"Scored only against verified ground truth for capabilities supported by this engine.":
    "Accuracy metrics are unavailable: no verified capability-compatible ground truth exists.";
   jdbc.update("""
