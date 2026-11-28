@@ -69,7 +69,16 @@ services:
       REVERSE_LENS_WORKER_TOKEN: ${REVERSE_LENS_WORKER_TOKEN:-local-worker-token-change-me}
       WORKSPACE_ROOT: /workspace
       LOG_LEVEL: INFO
-    volumes: [analysis-workspace:/workspace]
+      MOBSF_URL: ${MOBSF_URL:-}
+      MOBSF_API_KEY: ${MOBSF_API_KEY:-}
+      MOBSF_ALLOWED_HOSTS: ${MOBSF_ALLOWED_HOSTS:-mobsf}
+      GHIDRA_HOME: /opt/reverselens-tooling/ghidra
+      BLUTTER_HOME: /opt/reverselens-tooling/blutter
+      EXODUS_ANALYZE: /opt/reverselens-tooling/exodus-standalone/exodus_analyze.py
+      APKEDITOR_JAR: /opt/APKEditor.jar
+    volumes:
+      - analysis-workspace:/workspace
+      - ./tooling:/opt/reverselens-tooling:ro
     depends_on:
       redis: { condition: service_healthy }
       api: { condition: service_started }

@@ -408,9 +408,11 @@ Exit: local/authorized capture creates isolated outputs per engine; internal-net
 ### Phase 4 — Specialist Android and native engines
 **Estimate:** 3–5 weeks / 45–75 hours
 
-Deliverables: runtime classification and compatibility routing; Blutter adapter; Hermes adapter; Ghidra headless adapter; APKEditor where needed; MobSF worker/API; optional APKLeaks, Exodus and Quark integrations after license/compatibility review; call graphs and specialist benchmark matrix.
+**Current milestone:** the Phase 4 branch adds bounded APK runtime classification, explicit Flutter ARM64/Hermes HBC/native ELF compatibility routing, APKEditor 1.4.9, APKLeaks 2.6.3, optional Hermes/Blutter/Ghidra/MobSF/Exodus adapters, a Ghidra headless function/call-graph exporter, normalized specialist evidence and specialist benchmark profiles. See [Phase 4 implementation](docs/phase-4/IMPLEMENTATION.md) and [Phase 4 checklist](docs/PHASE_4_CHECKLIST.md).
 
-Exit: runtimes dispatch to relevant specialists; unsupported analysis is explicit; outputs and resource use appear in benchmark results.
+**Important boundary:** optional engines require separately provisioned tooling or a private MobSF service. Generic CI covers synthetic runtime/compatibility/extraction fixtures and builds the standard worker image; it does not claim a full Blutter/Hermes/Ghidra/MobSF/Exodus run against real-world binaries. Maintainer acceptance tests and licensing review remain open and are listed in the checklist.
+
+Exit: runtimes dispatch only to compatible specialists; unsupported analysis is explicitly incompatible; specialist outputs/resource use are recorded; static call graphs link to hashed evidence; comparisons use capability-compatible verified ground truth.
 
 ### Phase 5 — Architecture explorer and professional dossier
 **Estimate:** 2–3 weeks / 30–45 hours

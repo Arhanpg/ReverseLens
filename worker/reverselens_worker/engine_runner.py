@@ -11,9 +11,11 @@ from pathlib import Path
 
 from .security import extract_apks_safely, inventory_files, safe_workspace_path, sha256_file
 from .normalizer import normalize_engine
+from .android_runtime import classify_android_apk, compatibility
+from .specialist_adapters import specialist_commands
 
-ADAPTER_VERSION = "0.1.0"
-TOOL_VERSIONS = {"jadx": "1.5.7", "apktool": "3.0.3", "androguard": "4.1.4", "apkid": "3.2.0", "bundletool": "1.18.3"}
+ADAPTER_VERSION = "0.2.0"
+TOOL_VERSIONS = {"jadx": "1.5.7", "apktool": "3.0.3", "androguard": "4.1.4", "apkid": "3.2.0", "bundletool": "1.18.3", "apkeditor": "1.4.9", "apkleaks": "2.6.3", "hermes-dec": "0.1.8", "ghidra": "12.2", "blutter": "pre-provisioned", "mobsf": "self-hosted", "exodus-standalone": "1.5.0"}
 
 
 def run_command(command: list[str], timeout: int, metrics_path: Path) -> tuple[int, str, str, int, dict]:
@@ -24,7 +26,12 @@ def run_command(command: list[str], timeout: int, metrics_path: Path) -> tuple[i
     process = subprocess.Popen(wrapper, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                text=True, errors="replace", start_new_session=True,
                                env={"PATH": os.environ.get("PATH", "/opt/venv/bin:/usr/local/bin:/usr/bin:/bin"),
-                                    "HOME": "/tmp", "LANG": "C.UTF-8", "PYTHONUNBUFFERED": "1"})
+                                    "HOME": "/tmp", "LANG": "C.UTF-8", "PYTHONUNBUFFERED": "1",
+                                    **{key: os.environ[key] for key in (
+                                        "MOBSF_URL", "MOBSF_API_KEY", "MOBSF_ALLOWED_HOSTS",
+                                        "APKEDITOR_JAR", "BLUTTER_HOME", "GHIDRA_HOME",
+                                        "EXODUS_ANALYZE"
+                                    ) if key in os.environ}})
     try:
         stdout, stderr = process.communicate(timeout=timeout + 20)
         code = process.returncode or 0
@@ -115,8 +122,31 @@ def execute(job: dict, workspace_root: Path) -> dict:
             if fmt == "apks":
                 splits = extract_apks_safely(input_path, raw_dir / "splits")
                 effective_input = select_base_split(splits)
-                warnings.append(f"Extracted {len(splits)} split APKs; this baseline analyzes only the selected base split.")
-            if engine_id == "jadx":
+                warnings.append(f"Extracted {len(splits)} split APKs; only the selected base split is analyzed by this adapter.")
+            profile = None
+            if fmt in {"apk", "apks"}:
+                profile = classify_android_apk(effective_input)
+                write_json(raw_dir / "android-runtime-profile.json", profile.to_dict())
+                if profile.warnings:
+                    warnings.extend(profile.warnings)
+            specialist_ids = {"apkeditor", "apkleaks", "hermes-dec", "blutter",
+                              "ghidra", "mobsf", "exodus-standalone"}
+            if engine_id in specialist_ids:
+                if engine_id in {"hermes-dec", "blutter", "ghidra"}:
+                    if profile is None:
+                        status, exit_code = "incompatible", 0
+                        warnings.append(f"{engine_id} requires an APK runtime profile; input format was {fmt}.")
+                    else:
+                        compatible, reason = compatibility(engine_id, profile)
+                        if not compatible:
+                            status, exit_code = "incompatible", 0
+                            warnings.append(reason)
+                        else:
+                            warnings.append(reason)
+                            commands = specialist_commands(engine_id, effective_input, raw_dir, profile)
+                else:
+                    commands = specialist_commands(engine_id, effective_input, raw_dir, profile)
+            elif engine_id == "jadx":
                 commands = [["jadx", "-d", str(raw_dir / "decompiled"), str(effective_input)]]
             elif engine_id == "apktool":
                 commands = [["apktool", "d", "-f", "-o", str(raw_dir / "decoded"), str(effective_input)]]

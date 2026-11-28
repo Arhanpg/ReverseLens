@@ -1,5 +1,5 @@
 registry_version: "1.0.0"
-updated_at: "2026-11-21"
+updated_at: "2026-11-28"
 engines:
   - engine_id: jadx
     name: JADX
@@ -102,12 +102,12 @@ engines:
     capability_classes: [mobile_static_analysis, mobile_dynamic_analysis]
     repository_url: https://github.com/MobSF/Mobile-Security-Framework-MobSF
     documentation_url: https://mobsf.github.io/docs/
-    integration_status: candidate
+    integration_status: prototype
     priority: P0
     license: GPL-3.0
     license_review_status: metadata_checked
     maintenance_status: active_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [apk, supported_mobile_packages]
     expected_outputs: [security_report, manifest_analysis, finding_inventory]
     network_requirement: none
@@ -118,6 +118,7 @@ engines:
     known_limitations:
       - Dynamic analysis requires a separately prepared, authorized test environment.
       - Distribution and service-deployment implications of GPL-3.0 require review.
+    notes: "Phase 4 adapter uses a separately configured private/self-hosted MobSF API. Static scanning only; GPL-3.0 distribution and service obligations require review."
   - engine_id: bundletool
     name: bundletool
     description: Google's command-line tool for Android App Bundle and APK-set operations.
@@ -149,12 +150,12 @@ engines:
     capability_classes: [elf_analysis, arm64_disassembly, native_pseudocode]
     repository_url: https://github.com/NationalSecurityAgency/ghidra
     documentation_url: https://github.com/NationalSecurityAgency/ghidra
-    integration_status: candidate
+    integration_status: prototype
     priority: P1
     license: Apache-2.0
     license_review_status: metadata_checked
     maintenance_status: active_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [elf, so, supported_native_binary]
     expected_outputs: [disassembly, functions, symbols, decompiler_pseudocode]
     network_requirement: none
@@ -164,29 +165,31 @@ engines:
     dependencies: []
     known_limitations:
       - Analysis quality depends on symbols, architecture, compiler output and analyst interpretation.
+    notes: "Optional Ghidra 12.2 headless adapter. Distribution is externally provisioned; functions and call edges are static analysis, not runtime traces."
   - engine_id: apkeditor
     name: APKEditor
-    description: APK processing and editing utility for supported Android package formats.
+    description: APK resource and manifest decoding, including supported split package processing.
     platforms: [android]
-    roles: [package_decoder]
-    capability_classes: [apk_processing, split_package_processing]
+    roles: [package_decoder, disassembler]
+    capability_classes: [apk_processing, android_resources, manifest, smali]
     repository_url: https://github.com/REAndroid/APKEditor
     documentation_url: https://github.com/REAndroid/APKEditor
-    integration_status: candidate
+    integration_status: integrated
     priority: P1
     license: Apache-2.0
     license_review_status: metadata_checked
     maintenance_status: active_signal
-    last_repository_check: "2026-11-21"
-    supported_input_types: [apk, supported_split_archives]
-    expected_outputs: [processed_package, package_inventory]
+    last_repository_check: "2026-11-28"
+    supported_input_types: [apk, apks_base_split]
+    expected_outputs: [decoded_manifest, decoded_resources, smali]
     network_requirement: none
     isolation_profile: artifact_sandbox
     runtime_requirements: [Java runtime]
     resource_class: medium
     dependencies: []
     known_limitations:
-      - Supported archive formats must be validated with fixtures before claiming compatibility.
+      - APKS input analyzes only the selected base split; split-aware fan-out is not complete.
+    notes: "The standard worker image installs APKEditor 1.4.9 with a SHA-256-pinned upstream JAR."
   - engine_id: blutter
     name: Blutter
     description: Flutter AOT reverse-engineering helper for supported ARM64 application binaries.
@@ -195,12 +198,12 @@ engines:
     capability_classes: [flutter_aot, dart_object_pool, arm64]
     repository_url: https://github.com/worawit/blutter
     documentation_url: https://github.com/worawit/blutter
-    integration_status: candidate
+    integration_status: prototype
     priority: P1
     license: MIT
     license_review_status: metadata_checked
     maintenance_status: active_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [flutter_arm64_libapp_so]
     expected_outputs: [dart_symbols, object_pool, assembly, pseudocode_artifacts]
     network_requirement: none
@@ -210,6 +213,7 @@ engines:
     dependencies: []
     known_limitations:
       - Runtime/version/architecture compatibility must be checked per sample.
+    notes: "Optional pre-provisioned Blutter checkout; adapter is restricted to Android arm64-v8a libapp.so. Runtime builds/downloads must be provisioned before execution."
   - engine_id: hermes-dec
     name: Hermes Decompiler
     description: Disassembles and reconstructs partial JavaScript-like output from React Native Hermes bytecode.
@@ -218,12 +222,12 @@ engines:
     capability_classes: [react_native, hermes_bytecode]
     repository_url: https://github.com/P1sec/hermes-dec
     documentation_url: https://github.com/P1sec/hermes-dec
-    integration_status: candidate
+    integration_status: prototype
     priority: P1
     license: AGPL-3.0
     license_review_status: metadata_checked
     maintenance_status: active_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [hermes_bytecode_bundle]
     expected_outputs: [hermes_disassembly, reconstructed_javascript]
     network_requirement: none
@@ -234,6 +238,7 @@ engines:
     known_limitations:
       - Reconstructed output is not guaranteed to be equivalent to original JavaScript.
       - AGPL-3.0 obligations require distribution/service review.
+    notes: "Optional hermes-dec 0.1.8 adapter for verified Hermes HBC bundles. AGPL-3.0-or-later requires distribution/service review."
   - engine_id: apkleaks
     name: APKLeaks
     description: Scans supplied APK files for URI, endpoint and secret-like string patterns.
@@ -242,12 +247,12 @@ engines:
     capability_classes: [uri_extraction, string_pattern_triage]
     repository_url: https://github.com/dwisiswant0/apkleaks
     documentation_url: https://github.com/dwisiswant0/apkleaks
-    integration_status: candidate
+    integration_status: integrated
     priority: P1
     license: Apache-2.0
     license_review_status: metadata_checked
     maintenance_status: limited_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [apk]
     expected_outputs: [uri_candidates, secret_pattern_candidates]
     network_requirement: none
@@ -257,6 +262,7 @@ engines:
     dependencies: []
     known_limitations:
       - Pattern matches are leads for review, not proof that a secret is usable or exposed.
+    notes: "Bundled APKLeaks 2.6.3 CLI uses the preinstalled JADX binary. Findings are unverified string/URI candidates; known token-like values are redacted in normalized output."
   - engine_id: exodus-standalone
     name: Exodus Privacy Standalone
     description: Local tracker-signature analysis for compatible Android packages.
@@ -265,12 +271,12 @@ engines:
     capability_classes: [tracker_signature_matching]
     repository_url: https://github.com/Exodus-Privacy/exodus-standalone
     documentation_url: https://github.com/Exodus-Privacy/exodus-standalone
-    integration_status: candidate
+    integration_status: prototype
     priority: P2
     license: AGPL-3.0
     license_review_status: metadata_checked
     maintenance_status: limited_signal
-    last_repository_check: "2026-11-21"
+    last_repository_check: "2026-11-28"
     supported_input_types: [apk]
     expected_outputs: [tracker_inventory]
     network_requirement: none
@@ -280,6 +286,7 @@ engines:
     dependencies: []
     known_limitations:
       - Signature databases are incomplete and results depend on signature freshness.
+    notes: "Optional local Exodus Standalone 1.5.0 script adapter. AGPL-3.0 and signature-database redistribution/update terms require review."
   - engine_id: frida
     name: Frida
     description: Dynamic instrumentation toolkit for controlled, owned or explicitly authorized lab applications.

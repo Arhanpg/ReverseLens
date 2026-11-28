@@ -1,0 +1,3 @@
+# Optional specialist dependencies.
+# Hermes Decompiler is AGPL-3.0-or-later; review obligations before installation/distribution.
+hermes-dec==0.1.8

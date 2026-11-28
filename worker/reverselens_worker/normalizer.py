@@ -232,6 +232,150 @@ def _bundletool(root: Path, rows: list[dict]) -> None:
                      str(name), inventory, root, "high", {"size_bytes": split.get("size_bytes")})
 
 
+
+_SECRET_VALUE = re.compile(
+    r"(?i)(?:AKIA[0-9A-Z]{16}|(?:gh[pousr]_[A-Za-z0-9_]{20,})|"
+    r"(?:sk-[A-Za-z0-9_-]{20,})|(?:Bearer\s+[A-Za-z0-9._~-]{12,})|"
+    r"(?:eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{8,}))"
+)
+
+
+def _redact(value: object) -> str:
+    return _SECRET_VALUE.sub("[REDACTED_CANDIDATE]", str(value)[:8000])
+
+
+def _load_json(path: Path):
+    try:
+        if not path.is_file() or path.stat().st_size > 30 * 1024 * 1024:
+            return None
+        return json.loads(path.read_text(encoding="utf-8", errors="replace"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _specialist(engine: str, root: Path, rows: list[dict]) -> None:
+    if engine == "apkeditor":
+        manifest = root / "raw/apkeditor/decoded/AndroidManifest.xml"
+        if manifest.is_file():
+            _manifest_observations(engine, manifest, root, rows, "manifest")
+
+    elif engine == "hermes-dec":
+        for path in (root / "raw/hermes/bundle.pseudo.js", root / "raw/hermes/bundle.hasm"):
+            if not path.is_file():
+                continue
+            try:
+                content = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            line_count = content.count("\n") + (1 if content else 0)
+            _add(rows, engine, "hermes_bytecode", "reconstruction_summary",
+                 "Hermes reconstructed artifact", f"{path.name}: {line_count} lines",
+                 path, root, "medium", {"line_count": line_count,
+                 "note": "Reconstructed output is approximate and is not source-equivalence proof."})
+
+    elif engine == "blutter":
+        for name in ("pp.txt", "objs.txt"):
+            path = root / "raw/blutter" / name
+            if not path.is_file():
+                continue
+            try:
+                line_count = sum(1 for _ in path.open("r", encoding="utf-8", errors="replace"))
+            except OSError:
+                continue
+            _add(rows, engine, "dart_object_pool", "object_pool_summary",
+                 "Blutter object pool", f"{name}: {line_count} lines",
+                 path, root, "medium", {"line_count": line_count})
+
+    elif engine == "ghidra":
+        functions, edges = [], []
+        base = root / "raw/ghidra-export"
+        for path in sorted(base.glob("*.json")):
+            data = _load_json(path)
+            if not isinstance(data, dict) or not isinstance(data.get("functions"), list):
+                continue
+            for item in data.get("functions", [])[:MAX_OBSERVATIONS]:
+                if not isinstance(item, dict) or not item.get("entry"):
+                    continue
+                name, entry = str(item.get("name") or "FUN_"), str(item["entry"])
+                functions.append({"id": entry, "name": name, "binary": data.get("binary_name")})
+                _add(rows, engine, "native_pseudocode", "native_function",
+                     "Ghidra native function", f"{name}@{entry}", path, root, "medium",
+                     {"binary": data.get("binary_name"), "language_id": data.get("language_id")})
+            for edge in data.get("call_edges", [])[:50000]:
+                if isinstance(edge, dict) and edge.get("caller") and edge.get("callee"):
+                    edges.append({
+                        "from": str(edge["caller"]), "to": str(edge["callee"]),
+                        "caller_name": str(edge.get("caller_name", "")),
+                        "callee_name": str(edge.get("callee_name", "")),
+                        "evidence_path": path.relative_to(root).as_posix(),
+                        "evidence_sha256": _digest(path),
+                        "validation_status": "static_reference",
+                    })
+        if functions or edges:
+            graph_dir = root / "graphs"
+            graph_dir.mkdir(exist_ok=True)
+            graph_path = graph_dir / "call-graph.json"
+            graph_path.write_text(json.dumps({
+                "schema_version": "1.0.0", "graph_type": "native_call_graph",
+                "nodes": functions, "edges": edges,
+                "limitations": [
+                    "Static disassembler references are not proof of runtime execution.",
+                    "Only functions and edges emitted by configured Ghidra runs are shown.",
+                ],
+            }, indent=2, sort_keys=True), encoding="utf-8")
+            _add(rows, engine, "native_call_graph", "call_graph_summary",
+                 "Native static call graph", f"{len(functions)} functions, {len(edges)} call edges",
+                 graph_path, root, "medium",
+                 {"function_count": len(functions), "edge_count": len(edges)})
+
+    elif engine == "apkleaks":
+        path = root / "raw/apkleaks/results.json"
+        data = _load_json(path)
+        candidates = data if isinstance(data, list) else (
+            data.get("results", data.get("findings", [])) if isinstance(data, dict) else []
+        )
+        if isinstance(candidates, list):
+            for item in candidates[:MAX_OBSERVATIONS]:
+                value = _redact(item if isinstance(item, str) else json.dumps(item, sort_keys=True))
+                _add(rows, engine, "uri_extraction", "apk_candidate",
+                     "APKLeaks URI/string candidate", value, path, root, "low",
+                     {"validation_status": "unverified_candidate"})
+        else:
+            path = root / "logs/command-1.stdout.txt"
+            if path.is_file():
+                for line in path.read_text(encoding="utf-8", errors="replace").splitlines()[:1000]:
+                    _add(rows, engine, "uri_extraction", "apk_candidate",
+                         "APKLeaks output candidate", _redact(line), path, root, "low",
+                         {"validation_status": "unverified_candidate"})
+
+    elif engine == "exodus-standalone":
+        path = root / "raw/exodus/report.json"
+        data = _load_json(path)
+        trackers = data.get("trackers", []) if isinstance(data, dict) else []
+        for tracker in trackers[:MAX_OBSERVATIONS] if isinstance(trackers, list) else []:
+            if isinstance(tracker, dict) and tracker.get("name"):
+                _add(rows, engine, "tracker_signature_matching", "tracker",
+                     "Exodus tracker signature", str(tracker["name"]), path, root, "medium",
+                     {"tracker_id": tracker.get("id"),
+                      "validation_status": "signature_match_not_runtime_confirmation"})
+
+    elif engine == "mobsf":
+        path = root / "raw/mobsf/mobsf-report.json"
+        data = _load_json(path)
+        if isinstance(data, dict):
+            summary = {
+                "manifest_analysis_sections": len(data.get("manifest_analysis", {}))
+                if isinstance(data.get("manifest_analysis"), dict) else 0,
+                "code_analysis_sections": len(data.get("code_analysis", {}))
+                if isinstance(data.get("code_analysis"), dict) else 0,
+                "file_analysis_sections": len(data.get("file_analysis", {}))
+                if isinstance(data.get("file_analysis"), dict) else 0,
+            }
+            _add(rows, engine, "mobile_static_analysis", "mobsf_summary",
+                 "MobSF static-analysis report", json.dumps(summary, sort_keys=True),
+                 path, root, "medium",
+                 {"validation_status": "tool_report_requires_analyst_review"})
+
 def normalize_engine(engine_id: str, output_root: Path) -> list[dict]:
     rows: list[dict] = []
     if engine_id == "androguard":
@@ -245,4 +389,7 @@ def normalize_engine(engine_id: str, output_root: Path) -> list[dict]:
         _apkid(output_root, rows)
     elif engine_id == "bundletool":
         _bundletool(output_root, rows)
+    elif engine_id in {"apkeditor", "hermes-dec", "blutter", "ghidra",
+                       "apkleaks", "exodus-standalone", "mobsf"}:
+        _specialist(engine_id, output_root, rows)
     return rows
